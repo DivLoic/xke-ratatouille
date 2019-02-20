@@ -1,0 +1,7 @@
+plugins { }
+
+dependencies {
+
+    compile project(':ratatouille-common')
+
+}

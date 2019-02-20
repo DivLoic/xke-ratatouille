@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+    hostname: elasticsearch
+    ports:
+    - 9200:9200
+    environment:
+    - cluster.name=docker-cluster
+    - bootstrap.memory_lock=true
+    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:6.6.1
+    ports:
+    - "5601:5601"
+    environment:
+      SERVER_NAME: kibana
+      ELASTICSEARCH_HOSTS: elasticsearch:9200
+
+  prometheus:
+    image: prom/prometheus:v2.8.1
+    hostname: prometheus
+    ports:
+      - "9090:9090"
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./docker/volumes/config/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:4.6.3
+    hostname: grafana
+    ports:
+    - "3000:3000"
+    volumes:
+      - ./docker/volumes/data/graphana/:/var/lib/grafana
+    depends_on:
+    - prometheus
