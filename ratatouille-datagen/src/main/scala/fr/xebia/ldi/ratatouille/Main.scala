@@ -10,14 +10,15 @@ import fr.xebia.ldi.ratatouille.http.Routing
 import io.circe.Json
 import org.apache.kafka.common.utils.Bytes
 import org.slf4j.LoggerFactory
+import pureconfig.error.ConfigReaderFailures
 import pureconfig.loadConfig
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContextExecutor, Future}
 
 /**
   * Created by loicmdivad.
   */
-object Main extends App with Routing {
+object Main extends App with ConfigurableApp with Routing {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -45,20 +46,26 @@ object Main extends App with Routing {
     system.terminate()
   }
 
-  loadConfig[GeneralConfig]("xke") match {
-    case Left(failures) =>
+  (for {
+
+    kafkaClientConfig <- loadConfig[KafkaClientConfig]("akka.kafka.producer.kafka-clients")
+
+    appConfig <- loadConfig[AppConfig]("xke")
+
+  } yield {
+
+    topicsCreation(kafkaClientConfig, appConfig)
+
+    Http().bindAndHandle(
+      routes,
+      appConfig.httpServer.host,
+      appConfig.httpServer.port
+    )
+
+  }).left.map { failures =>
       failures.toList.foreach { failure =>
         logger error failure.description
       }
-
       sys.exit()
-
-    case Right(config) =>
-
-      Http().bindAndHandle(
-        routes,
-        config.httpServer.host,
-        config.httpServer.port
-      )
   }
 }

@@ -10,4 +10,9 @@ scrape_configs:
   - job_name: 'ratatouille'
     scrape_interval: 1s
     static_configs:
-    - targets: ['10.0.13.27:9001']
+    - targets: ['host.docker.internal:9001']
+
+  - job_name: 'kafka'
+    scrape_interval: 1s
+    static_configs:
+    - targets: ['kafka:9094']

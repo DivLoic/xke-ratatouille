@@ -122,7 +122,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
-<script src="/__/firebase/5.8.3/firebase-app.js"></script>
+<!--<script src="/__/firebase/5.8.3/firebase-app.js"></script>
 <script src="/__/firebase/5.8.3/firebase-auth.js"></script>
 <script src="/__/firebase/5.8.3/firebase-database.js"></script>
 <script>
@@ -135,14 +135,15 @@
         messagingSenderId: "925598217487"
     };
     firebase.initializeApp(config);
-
+</script>-->
+<script>
     var EX = {
         "breakfast": "tg1",
         "lunch": "tg2",
         "drink": "tg3"
     };
 
-    $.get("http://localhost:8080/api/status", function (data) {
+    $.get("http://localhost:7070/api/status", function (data) {
         console.log(data);
         data["exercises"].forEach(function (el) {
             if (el["active"]) $("#" + EX[el["name"]]).prop("checked", true);
@@ -151,21 +152,21 @@
 
     $("#tg1").click(function () {
         var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:8080/api/" + action + "/breakfast", function (data) {
+        $.get("http://localhost:7070/api/" + action + "/breakfast", function (data) {
             console.log(data);
         });
     });
 
     $("#tg2").click(function () {
         var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:8080/api/" + action + "/lunch", function (data) {
+        $.get("http://localhost:7070/api/" + action + "/lunch", function (data) {
             console.log(data);
         });
     });
 
     $("#tg3").click(function () {
         var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:8080/api/" + action + "/drink", function (data) {
+        $.get("http://localhost:7070/api/" + action + "/drink", function (data) {
             console.log(data);
         });
     });
@@ -184,7 +185,5 @@
     });
 
 </script>
-
-<script src="./script.js"></script>
 </body>
 </html>
