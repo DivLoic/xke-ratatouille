@@ -5,8 +5,8 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.kafka.ProducerMessage.Message
 import akka.pattern.ask
 import akka.util.Timeout
-import fr.xebia.ldi.ratatouille.codec.Breakfast
-import fr.xebia.ldi.ratatouille.codec.Lang.{EN, FR}
+import fr.xebia.ldi.ratatouille.model.Breakfast
+import fr.xebia.ldi.ratatouille.model.Lang.{EN, FR}
 import fr.xebia.ldi.ratatouille.exercice.Event._
 import fr.xebia.ldi.ratatouille.exercice.Exercise.ExerciseWorker
 import fr.xebia.ldi.ratatouille.exercice.ExerciseOne.ExerciseOneWorker

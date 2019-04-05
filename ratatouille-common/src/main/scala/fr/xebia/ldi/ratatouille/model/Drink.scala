@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.codec
+package fr.xebia.ldi.ratatouille.model
 
 import cats.kernel.Monoid
-import fr.xebia.ldi.ratatouille.codec.Drink.DrinkType
-import fr.xebia.ldi.ratatouille.model
+import fr.xebia.ldi.ratatouille.model.Drink.DrinkType
+import fr.xebia.ldi.ratatouille.codec
 import scodec.codecs.{Discriminated, Discriminator}
 
 /**
@@ -26,7 +26,7 @@ object Drink {
   object Whisky extends Whisky
   object Champagne extends Champagne
 
-  implicit val discriminated: Discriminated[DrinkType, Symbol] = Discriminated(model.symbolCodec)
+  implicit val discriminated: Discriminated[DrinkType, Symbol] = Discriminated(codec.symbolCodec)
 
   object DrinkType {
     implicit val discriminator1: Discriminator[DrinkType, Wine, Symbol] = Discriminator('Wine)

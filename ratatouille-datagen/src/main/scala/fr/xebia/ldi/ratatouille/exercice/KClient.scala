@@ -7,7 +7,7 @@ import akka.kafka.ProducerSettings
 import akka.kafka.scaladsl.Producer
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{RunnableGraph, Sink, Source}
-import fr.xebia.ldi.ratatouille.codec.Breakfast
+import fr.xebia.ldi.ratatouille.model.Breakfast
 import fr.xebia.ldi.ratatouille.serde.{BreakfastSerde, CirceSerializer}
 import org.apache.kafka.common.serialization.{Serdes, Serializer}
 import org.apache.kafka.common.utils.Bytes

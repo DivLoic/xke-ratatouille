@@ -2,7 +2,7 @@ package fr.xebia.ldi.ratatouille.serde
 
 import java.util
 
-import fr.xebia.ldi.ratatouille.codec._
+import fr.xebia.ldi.ratatouille.model._
 import org.apache.kafka.common.serialization.{Deserializer, Serde, Serdes, Serializer}
 
 /**

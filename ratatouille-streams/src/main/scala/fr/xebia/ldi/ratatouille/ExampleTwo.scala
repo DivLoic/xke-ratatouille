@@ -1,7 +1,7 @@
 package fr.xebia.ldi.ratatouille
 
-import fr.xebia.ldi.ratatouille.codec.Lunch
-import fr.xebia.ldi.ratatouille.codec.Lunch.{LunchError, dishToString}
+import fr.xebia.ldi.ratatouille.model.Lunch
+import fr.xebia.ldi.ratatouille.model.Lunch.{LunchError, dishToString}
 import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
 import org.apache.kafka.streams.kstream.Printed
 import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}

@@ -3,7 +3,7 @@ package fr.xebia.ldi.ratatouille
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
-import fr.xebia.ldi.ratatouille.codec.Breakfast
+import fr.xebia.ldi.ratatouille.model.Breakfast
 import fr.xebia.ldi.ratatouille.exercice.KClient._
 import fr.xebia.ldi.ratatouille.exercice.{ExerciseOne, ExerciseThree, ExerciseTwo, KClient}
 import fr.xebia.ldi.ratatouille.http.Routing

@@ -3,7 +3,7 @@ package fr.xebia.ldi.ratatouille.exercice
 import akka.NotUsed
 import akka.actor.{ActorRef, ActorSystem, Props}
 import akka.kafka.ProducerMessage.Message
-import fr.xebia.ldi.ratatouille.codec.Lunch
+import fr.xebia.ldi.ratatouille.model.Lunch
 import fr.xebia.ldi.ratatouille.exercice.Event._
 import fr.xebia.ldi.ratatouille.exercice.Exercise.ExerciseWorker
 import fr.xebia.ldi.ratatouille.exercice.ExerciseTwo.ExerciseTwoWorker

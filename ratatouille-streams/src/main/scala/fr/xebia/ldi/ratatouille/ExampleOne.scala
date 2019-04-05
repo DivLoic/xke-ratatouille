@@ -1,6 +1,6 @@
 package fr.xebia.ldi.ratatouille
 
-import fr.xebia.ldi.ratatouille.codec.Breakfast
+import fr.xebia.ldi.ratatouille.model.Breakfast
 import fr.xebia.ldi.ratatouille.serde.BreakfastSerde
 import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler

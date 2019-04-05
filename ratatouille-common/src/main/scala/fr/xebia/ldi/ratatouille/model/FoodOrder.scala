@@ -1,9 +1,6 @@
-package fr.xebia.ldi.ratatouille.codec
+package fr.xebia.ldi.ratatouille.model
 
-import cats.Applicative
-import fr.xebia.ldi.ratatouille.codec.Breakfast.{Meat, Pastry}
-import scodec.{Attempt, Codec}
-import scodec.bits._
+import scodec.Codec
 import scodec.codecs._
 import scodec.codecs.implicits._
 
@@ -20,9 +17,7 @@ object FoodOrder {
   }
 
   import FoodType._
-
-  implicit val attemptApplicative: Applicative[Attempt] = Worksheet.AttemptA()
-  implicit val bf2Codec: Codec[Either[Meat, Vector[Pastry]]] = Worksheet.CodecB()
+  import fr.xebia.ldi.ratatouille.codec.breakfastDishCodec
 
   implicit val childTypeCodec : Codec[FoodType] = scodec.codecs.enumerated(uint8, FoodType)
 
