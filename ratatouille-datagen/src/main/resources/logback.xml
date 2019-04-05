@@ -3,7 +3,7 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
-                %d{yyyy-MM-dd HH:mm:ss} [%-5level] (%file:%line\) - %msg%n
+                %yellow(%d{yyyy-MM-dd HH:mm:ss}) %cyan(${MACHINE:-hostname}) %highlight([%4.-4p]) %green((%file:%line\)) - %msg%n
             </pattern>
         </encoder>
     </appender>

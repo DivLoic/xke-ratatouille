@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
 import scodec.Codec
 import scodec.bits.BitVector
-import fr.xebia.ldi.ratatouille.model.Breakfast._
+import fr.xebia.ldi.ratatouille.common.model.Breakfast._
 
 /**
   * Created by loicmdivad.
@@ -10,7 +10,7 @@ import fr.xebia.ldi.ratatouille.model.Breakfast._
 object BreakfastDraft extends App {
 
   import scodec.codecs.implicits._
-  import fr.xebia.ldi.ratatouille.codec.breakfastDishCodec
+  import fr.xebia.ldi.ratatouille.common.codec.breakfastDishCodec
 
 
   case class Breakfast2(lang: Lang,

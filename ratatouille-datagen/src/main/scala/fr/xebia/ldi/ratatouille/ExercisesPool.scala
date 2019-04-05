@@ -7,7 +7,7 @@ import fr.xebia.ldi.ratatouille.exercice.{Event, Exercise}
 /**
   * Created by loicmdivad.
   */
-class ExercisesPool(val pool: Vector[Exercise]) {
+class ExercisesPool(val pool: Exercise*) {
 
   def selectByName(name: String): Option[Exercise] = pool.find(_.name == name)
 

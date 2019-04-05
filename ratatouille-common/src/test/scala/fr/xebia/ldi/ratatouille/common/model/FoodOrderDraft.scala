@@ -1,11 +1,11 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
-import fr.xebia.ldi.ratatouille.model.Breakfast.Fruit.Pineapple
-import fr.xebia.ldi.ratatouille.model.Breakfast.Lang.EN
-import fr.xebia.ldi.ratatouille.model.Breakfast.Liquid.Beer
-import fr.xebia.ldi.ratatouille.model.Breakfast.Meat
-import fr.xebia.ldi.ratatouille.model.Dinner.{Command, Moment}
-import fr.xebia.ldi.ratatouille.model.Drink.Rhum
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Fruit.Pineapple
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Lang.EN
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Liquid.Beer
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Meat
+import fr.xebia.ldi.ratatouille.common.model.Dinner.{Command, Moment}
+import fr.xebia.ldi.ratatouille.common.model.Drink.Rhum
 import scodec.Codec
 import scodec.bits._
 
@@ -13,6 +13,8 @@ import scodec.bits._
   * Created by loicmdivad.
   */
 object FoodOrderDraft extends App {
+
+  import FoodOrder.foodCodec
 
   // Breakfast__________________________________________________________________________________________________________
   println("Breakfast")

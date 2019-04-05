@@ -1,6 +1,6 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
-import fr.xebia.ldi.ratatouille.model.Breakfast._
+import fr.xebia.ldi.ratatouille.common.model.Breakfast._
 import scodec.codecs.{Discriminated, Discriminator, uint8}
 import scodec.{Codec, codecs}
 
@@ -8,9 +8,14 @@ import scodec.{Codec, codecs}
   * Created by loicmdivad.
   */
 case class Breakfast(lang: Lang,
-                     drink: Liquid,
+                     liquid: Liquid,
                      fruit: Fruit,
-                     dishes: Either[Meat, Vector[Pastry]] = Right(Vector.empty)) extends FoodOrder
+                     dishes: Either[Meat, Vector[Pastry]] = Right(Vector.empty)) extends FoodOrder {
+
+  override def toString =
+    s"lang: $lang,  drink: $liquid  fruits: $fruit, dishes: " + dishes.getOrElse(dishes.left.get)
+
+}
 
 object Breakfast {
 

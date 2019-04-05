@@ -1,12 +1,11 @@
 package fr.xebia.ldi.ratatouille.processor
 
-import io.circe.Json
+import fr.xebia.ldi.ratatouille.common.model.FoodOrder
+import org.apache.kafka.common.MetricName
+import org.apache.kafka.common.metrics.{MetricConfig, Metrics, Sensor}
+import org.apache.kafka.streams.StreamsMetrics
 import org.apache.kafka.streams.kstream.ValueTransformer
 import org.apache.kafka.streams.processor.ProcessorContext
-import org.apache.kafka.common.MetricName
-import org.apache.kafka.common.metrics.stats.Min
-import org.apache.kafka.common.metrics.{MeasurableStat, MetricConfig, Metrics, Sensor}
-import org.apache.kafka.streams.StreamsMetrics
 import org.apache.kafka.streams.processor.internals.metrics.CumulativeCount
 
 import scala.collection.JavaConverters._
@@ -14,7 +13,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by loicmdivad.
   */
-class WrongJsonSink extends ValueTransformer[Json, Unit] {
+class FoodOrderErrorSink extends ValueTransformer[FoodOrder, Unit] {
 
   var sensor: Sensor = _
 
@@ -44,7 +43,7 @@ class WrongJsonSink extends ValueTransformer[Json, Unit] {
     sensor.add(metricName, new CumulativeCount())
   }
 
-  override def transform(value: Json): Unit = {
+  override def transform(value: FoodOrder): Unit = {
 
     sensor.record()
 

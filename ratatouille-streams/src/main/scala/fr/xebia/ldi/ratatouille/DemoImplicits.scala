@@ -9,7 +9,7 @@ import scala.collection.JavaConverters._
 /**
   * Created by loicmdivad.
   */
-trait Example {
+trait DemoImplicits {
 
   protected val logger: Logger = LoggerFactory.getLogger(getClass)
 

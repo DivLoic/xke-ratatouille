@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
 import cats.kernel.Monoid
-import fr.xebia.ldi.ratatouille.model.Drink.DrinkType
-import fr.xebia.ldi.ratatouille.codec
+import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
+import fr.xebia.ldi.ratatouille.common.codec
 import scodec.codecs.{Discriminated, Discriminator}
 
 /**

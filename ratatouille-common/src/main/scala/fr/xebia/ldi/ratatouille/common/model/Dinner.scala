@@ -1,6 +1,6 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
-import fr.xebia.ldi.ratatouille.model.Dinner.{Client, Command, Moment}
+import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
 
 /**
   * Created by loicmdivad.

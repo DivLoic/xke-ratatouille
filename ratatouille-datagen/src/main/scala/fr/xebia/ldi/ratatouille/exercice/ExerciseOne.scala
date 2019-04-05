@@ -5,12 +5,12 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.kafka.ProducerMessage.Message
 import akka.pattern.ask
 import akka.util.Timeout
-import fr.xebia.ldi.ratatouille.model.Breakfast
-import fr.xebia.ldi.ratatouille.model.Lang.{EN, FR}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast
 import fr.xebia.ldi.ratatouille.exercice.Event._
 import fr.xebia.ldi.ratatouille.exercice.Exercise.ExerciseWorker
 import fr.xebia.ldi.ratatouille.exercice.ExerciseOne.ExerciseOneWorker
 import fr.xebia.ldi.ratatouille.exercice.Generator.GeneratorOne.generate
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Lang.{EN, FR}
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.scalacheck.Gen
 import org.scalacheck.Gen.Parameters.default
@@ -23,8 +23,8 @@ import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor}
 /**
   * Created by loicmdivad.
   */
-case class ExerciseOne(producer: ActorRef)
-                      (implicit
+case class ExerciseOne()(implicit
+                       val producer: ActorRef,
                        val actorSystem: ActorSystem,
                        val dispatcher: ExecutionContext) extends Exercise {
 

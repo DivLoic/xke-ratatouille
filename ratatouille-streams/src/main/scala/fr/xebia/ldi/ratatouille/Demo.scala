@@ -1,7 +1,7 @@
 package fr.xebia.ldi.ratatouille
 
-import fr.xebia.ldi.ratatouille.model.Breakfast
-import fr.xebia.ldi.ratatouille.serde.BreakfastSerde
+import fr.xebia.ldi.ratatouille.common.model.{Breakfast, FoodOrder}
+import fr.xebia.ldi.ratatouille.common.serde.FoodOrderSerde
 import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler
 import org.apache.kafka.streams.kstream.Printed
@@ -13,7 +13,7 @@ import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 /**
   * Created by loicmdivad.
   */
-object ExampleOne extends App with Example {
+object Demo extends App with DemoImplicits {
 
   val config = Map(
     StreamsConfig.APPLICATION_ID_CONFIG -> "answer-one-breakfast",
@@ -21,18 +21,25 @@ object ExampleOne extends App with Example {
     StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG -> classOf[LogAndContinueExceptionHandler]
   )
 
-  val consumed: Consumed[Bytes, Breakfast] = Consumed.`with`(Serdes.Bytes, BreakfastSerde.Serde.breakfast)
+  val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde)
 
   val builder: StreamsBuilder = new StreamsBuilder()
 
-  builder
+  val Array(breakfasts, food) = builder
 
-    .stream[Bytes, Breakfast]("exercise-breakfast")(consumed)
+    .stream[Bytes, FoodOrder]("exercise-breakfast")(consumed)
+
+    .branch(
+      (_, value) => value.isInstanceOf[Breakfast],
+      (_, _) => true
+    )
+
+  breakfasts
 
     .mapValues { meal =>
-
-      s"lang: ${meal.lang},  drink: ${meal.drink},  fruits ${meal.fruit},  ${meal.dishes.right.get}"
-
+      meal match {
+        case command: Breakfast => command.toString
+      }
     }
 
     .print(Printed.toSysOut[Bytes, String])

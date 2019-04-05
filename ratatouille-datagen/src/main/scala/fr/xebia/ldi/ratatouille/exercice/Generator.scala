@@ -1,10 +1,11 @@
 package fr.xebia.ldi.ratatouille.exercice
 
-import fr.xebia.ldi.ratatouille.model.Drink.{Beer, Coffe, Milk, OrangeJuice, Tea}
-import fr.xebia.ldi.ratatouille.model.Fruit.{Banana, Kiwi, Pineapple, Tomato, Watermelon}
-import fr.xebia.ldi.ratatouille.model.{Breakfast, Lang, Meat}
-import fr.xebia.ldi.ratatouille.model.Lang.{EN, FR}
-import fr.xebia.ldi.ratatouille.model.Pastry.{Croissant, Painauchocolat, Painauraisins}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Fruit.{Banana, Kiwi, Pineapple, Watermelon}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.{Lang, Meat}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Lang.{EN, FR}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Liquid.{Beer, Coffe, Milk, OrangeJuice, Tea}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Pastry.{Croissant, Painauchocolat, Painauraisins}
 import org.scalacheck.Gen
 
 /**

@@ -14,7 +14,7 @@ trait Service {
   def getStatus =  Status(
     message = "OK!",
     code = 1,
-    exercises = exercisesPool.pool.map(ex =>
+    exercises = exercisesPool.pool.toVector.map(ex =>
     Exercise(ex.name, ex.getStatus match {
       case Running => true
       case _ => false

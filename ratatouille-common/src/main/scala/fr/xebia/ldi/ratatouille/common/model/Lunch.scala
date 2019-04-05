@@ -1,6 +1,6 @@
-package fr.xebia.ldi.ratatouille.model
+package fr.xebia.ldi.ratatouille.common.model
 
-import fr.xebia.ldi.ratatouille.model.Lunch._
+import fr.xebia.ldi.ratatouille.common.model.Lunch._
 import scodec.codecs.{Discriminated, Discriminator, cstring}
 
 /**

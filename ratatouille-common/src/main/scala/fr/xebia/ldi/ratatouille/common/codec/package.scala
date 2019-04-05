@@ -1,7 +1,7 @@
-package fr.xebia.ldi.ratatouille
+package fr.xebia.ldi.ratatouille.common
 
 import cats.Applicative
-import fr.xebia.ldi.ratatouille.model.Breakfast.{Meat, Pastry}
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.{Meat, Pastry}
 import scodec.bits.BitVector
 import scodec.codecs.{byte, cstring}
 import scodec.{Attempt, Codec, DecodeResult, SizeBound}

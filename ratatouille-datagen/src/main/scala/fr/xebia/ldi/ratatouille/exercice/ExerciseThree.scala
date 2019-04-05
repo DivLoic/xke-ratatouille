@@ -5,11 +5,12 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.kafka.ProducerMessage.Message
 import akka.pattern.ask
 import akka.util.Timeout
-import fr.xebia.ldi.ratatouille.model.{Drink, BeverageType}
-import fr.xebia.ldi.ratatouille.model.Drink.{BeverageCommand, IncorrectBeverageCommand}
+import cats.implicits._
 import fr.xebia.ldi.ratatouille.exercice.Event._
 import fr.xebia.ldi.ratatouille.exercice.Exercise.ExerciseWorker
 import fr.xebia.ldi.ratatouille.exercice.ExerciseThree.ExerciseThreeWorker
+import fr.xebia.ldi.ratatouille.common.model.Drink
+import fr.xebia.ldi.ratatouille.common.model.Drink.{BeverageCommand, IncorrectBeverageCommand, Water, beverageMonoid}
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -18,8 +19,6 @@ import org.scalacheck.Gen.{Parameters, frequency, listOfN, oneOf}
 import org.scalacheck.rng.Seed
 import org.scalacheck.{Arbitrary, Gen}
 import org.slf4j.{Logger, LoggerFactory}
-import cats.implicits._
-import Drink.beverageMonoid
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future}
@@ -158,7 +157,7 @@ object ExerciseThree {
   private case class WaterWorker() extends ExerciseThreeSubWorker {
 
     override def receive: Receive = {
-      case Send => sender() ! BeverageCommand(Vector(Drink("Sanpellegrino", BeverageType.Water, 100, None)))
+      case Send => sender() ! BeverageCommand(Vector(Drink("Sanpellegrino", Water, 100, None)))
     }
   }
 

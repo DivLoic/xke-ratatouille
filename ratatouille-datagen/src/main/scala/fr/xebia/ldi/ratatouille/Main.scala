@@ -1,19 +1,23 @@
 package fr.xebia.ldi.ratatouille
 
-import akka.actor.ActorSystem
+import akka.NotUsed
+import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
-import akka.stream.ActorMaterializer
-import fr.xebia.ldi.ratatouille.model.Breakfast
-import fr.xebia.ldi.ratatouille.exercice.KClient._
-import fr.xebia.ldi.ratatouille.exercice.{ExerciseOne, ExerciseThree, ExerciseTwo, KClient}
+import akka.kafka.ProducerMessage.Message
+import akka.kafka.ProducerSettings
+import akka.kafka.scaladsl.Producer
+import akka.stream.scaladsl.{Sink, Source}
+import akka.stream.{ActorMaterializer, OverflowStrategy}
+import fr.xebia.ldi.ratatouille.exercice.ExerciseOne
 import fr.xebia.ldi.ratatouille.http.Routing
-import io.circe.Json
+import fr.xebia.ldi.ratatouille.common.model.FoodOrder
+import fr.xebia.ldi.ratatouille.common.serde.FoodOrderSerde
+import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.utils.Bytes
 import org.slf4j.LoggerFactory
-import pureconfig.error.ConfigReaderFailures
 import pureconfig.loadConfig
 
-import scala.concurrent.{ExecutionContextExecutor, Future}
+import scala.concurrent.ExecutionContextExecutor
 
 /**
   * Created by loicmdivad.
@@ -28,17 +32,17 @@ object Main extends App with ConfigurableApp with Routing {
 
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  val stringProducer = KClient.producer[String, String].run()
-  val bytesProducer = KClient.producer[Bytes, Bytes].run()
-  val breakfasrProducer = KClient.producer[Bytes, Breakfast].run()
-  val drinksProducer = KClient.producer[String, Json].run()
+  val producerConfig: ProducerSettings[Bytes, FoodOrder] =
+    ProducerSettings(system, Serdes.Bytes().serializer(), FoodOrderSerde.foodSerde.serializer())
+
+  implicit val actorProducer: ActorRef =
+    Source.actorRef[Message[Bytes, FoodOrder, NotUsed]](10, OverflowStrategy.dropBuffer)
+    .via(Producer.flexiFlow(producerConfig))
+    .to(Sink.ignore)
+    .run()
 
   implicit val exercisesPool: ExercisesPool = new ExercisesPool(
-    Vector(
-      ExerciseOne(breakfasrProducer),
-      ExerciseTwo(stringProducer),
-      ExerciseThree(drinksProducer)
-    )
+    ExerciseOne()
   )
 
   sys.addShutdownHook {
