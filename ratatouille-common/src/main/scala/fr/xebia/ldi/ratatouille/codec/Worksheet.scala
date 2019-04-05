@@ -5,6 +5,7 @@ import scodec.{Attempt, Codec, DecodeResult}
 import scodec.bits.BitVector
 import scodec.codecs.byte
 import cats.implicits._
+import fr.xebia.ldi.ratatouille.codec.Breakfast.{Meat, Pastry}
 import scodec.bits._
 import scodec.codecs._
 import scodec.codecs.implicits._

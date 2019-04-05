@@ -2,7 +2,8 @@ package fr.xebia.ldi.ratatouille.serde
 
 import java.util
 
-import fr.xebia.ldi.ratatouille.codec.{Breakfast, _}
+import fr.xebia.ldi.ratatouille.codec.Breakfast
+import fr.xebia.ldi.ratatouille.codec.Breakfast.{Boose, Fruit, Lang, Pastry}
 import org.apache.kafka.common.serialization.Deserializer
 import scodec.{Attempt, Codec, DecodeResult, Err, SizeBound}
 import scodec.codecs._
@@ -29,7 +30,7 @@ object BreakfastDeserializer {
 
   implicit private[serde] lazy val breakfastEvidence: Codec[Breakfast] = new Codec[Breakfast] {
 
-    case class CodecBreakfast(lang: Lang, drink: Drink, fruit: Fruit, dishes: Vector[Pastry] = Vector.empty)
+    case class CodecBreakfast(lang: Lang, drink: Boose, fruit: Fruit, dishes: Vector[Pastry] = Vector.empty)
 
     override def encode(value: Breakfast): Attempt[BitVector] =
       Attempt.failure(Err("encoding use inside of the deserializer"))

@@ -1,37 +1,37 @@
 package fr.xebia.ldi.ratatouille.codec
 
 import fr.xebia.ldi.ratatouille.codec.Lunch._
-import purecsv.safe.converter.StringConverter
-
-import scala.util.Try
+import scodec.codecs.{Discriminated, Discriminator, cstring}
 
 /**
   * Created by loicmdivad.
   */
-case class Lunch(name: String, price: Double, `type`: Dish) {
+case class Lunch(name: String, price: Double, `type`: LunchType) extends FoodOrder {
 
-  override def toString: String = s"Lunch: $name (${`type`}), price: $price"
+  override def toString: String =
+    s"Lunch: $name (${`type`.getClass.getSimpleName.toLowerCase}), price: $price"
 }
 
 object Lunch {
 
-  sealed abstract class Dish
+  sealed abstract class LunchType
+  case class MainDish() extends LunchType
+  case class Starter() extends LunchType
+  case class Dessert() extends LunchType
+  case class Error() extends LunchType
 
-  case object MainDish extends Dish
-  case object Starter extends Dish
-  case object Dessert extends Dish
-  case object Error extends Dish
+  object MainDish extends MainDish
+  object Starter extends Starter
+  object Dessert extends Dessert
+  object Error extends Error
 
-  implicit val dishToString: StringConverter[Dish] = new StringConverter[Dish] {
-    val mapping: Map[Dish, String] = Map(
-      MainDish -> "main",
-      Starter -> "starter",
-      Dessert -> "dessert",
-    )
+  implicit val discriminated: Discriminated[LunchType, String] = Discriminated(cstring)
 
-    override def tryFrom(column: String): Try[Dish] = Try(mapping.map(_.swap)).map(_(column))
-
-    override def to(dish: Dish): String = mapping.getOrElse(dish, "Error")
+  object LunchType {
+      implicit val discriminator1: Discriminator[LunchType, MainDish, String] = Discriminator("main")
+      implicit val discriminator2: Discriminator[LunchType, Starter, String] = Discriminator("starter")
+      implicit val discriminator3: Discriminator[LunchType, Dessert, String] = Discriminator("dessert")
+      implicit val discriminator4: Discriminator[LunchType, Error, String] = Discriminator("error")
   }
 
   val menu: Vector[Lunch] = Vector(

@@ -5,8 +5,8 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.kafka.ProducerMessage.Message
 import akka.pattern.ask
 import akka.util.Timeout
-import fr.xebia.ldi.ratatouille.codec.{Beverage, BeverageType}
-import fr.xebia.ldi.ratatouille.codec.Beverage.{BeverageCommand, IncorrectBeverageCommand}
+import fr.xebia.ldi.ratatouille.codec.{Drink, BeverageType}
+import fr.xebia.ldi.ratatouille.codec.Drink.{BeverageCommand, IncorrectBeverageCommand}
 import fr.xebia.ldi.ratatouille.exercice.Event._
 import fr.xebia.ldi.ratatouille.exercice.Exercise.ExerciseWorker
 import fr.xebia.ldi.ratatouille.exercice.ExerciseThree.ExerciseThreeWorker
@@ -19,7 +19,7 @@ import org.scalacheck.rng.Seed
 import org.scalacheck.{Arbitrary, Gen}
 import org.slf4j.{Logger, LoggerFactory}
 import cats.implicits._
-import Beverage.beverageMonoid
+import Drink.beverageMonoid
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, ExecutionContextExecutor, Future}
@@ -118,13 +118,13 @@ object ExerciseThree {
 
   private case class WineWorker() extends ExerciseThreeSubWorker {
 
-    private val genGlasses = Arbitrary(listOfN(2, oneOf(Beverage.wines))).arbitrary
+    private val genGlasses = Arbitrary(listOfN(2, oneOf(Drink.wines))).arbitrary
 
-    private val genBottle = Arbitrary(listOfN(1, oneOf(Beverage.wines))).arbitrary
+    private val genBottle = Arbitrary(listOfN(1, oneOf(Drink.wines))).arbitrary
       .map(_.map(_.copy(quantity = 75)))
 
     override def receive: Receive = {
-      case Send => sender() ! frequency[Gen[List[Beverage]]]((2, genGlasses), (1, genBottle), (3, Gen.fail)).sample
+      case Send => sender() ! frequency[Gen[List[Drink]]]((2, genGlasses), (1, genBottle), (3, Gen.fail)).sample
         .map(_.pureApply(Parameters.default, Seed.random).toVector)
         .map(BeverageCommand)
         .getOrElse(IncorrectBeverageCommand)
@@ -135,11 +135,11 @@ object ExerciseThree {
 
   private case class ChampagneWorker() extends ExerciseThreeSubWorker {
 
-    private val failed = (8, Gen.fail[Beverage])
-    private val genarated = (2, Arbitrary(oneOf(Beverage.champagnes)).arbitrary)
+    private val failed = (8, Gen.fail[Drink])
+    private val genarated = (2, Arbitrary(oneOf(Drink.champagnes)).arbitrary)
 
     override def receive: Receive = {
-      case Send => sender() ! frequency[Beverage](genarated, failed).sample
+      case Send => sender() ! frequency[Drink](genarated, failed).sample
         .map(drink => drink.pure[Vector])
         .map(BeverageCommand)
         .getOrElse(IncorrectBeverageCommand)
@@ -151,14 +151,14 @@ object ExerciseThree {
   private case class RhumWorker() extends ExerciseThreeSubWorker {
 
     override def receive: Receive = {
-      case Send => sender() ! BeverageCommand(Vector(Beverage.tipunch))
+      case Send => sender() ! BeverageCommand(Vector(Drink.tipunch))
     }
   }
 
   private case class WaterWorker() extends ExerciseThreeSubWorker {
 
     override def receive: Receive = {
-      case Send => sender() ! BeverageCommand(Vector(Beverage("Sanpellegrino", BeverageType.Water, 100, None)))
+      case Send => sender() ! BeverageCommand(Vector(Drink("Sanpellegrino", BeverageType.Water, 100, None)))
     }
   }
 
@@ -166,7 +166,7 @@ object ExerciseThree {
 
     val min = 0
     val max = 4
-    val gen: Gen[Vector[Beverage]] = Gen.choose(min, max).flatMap(listOfN(_, oneOf(Beverage.whiskies)).map(_.toVector))
+    val gen: Gen[Vector[Drink]] = Gen.choose(min, max).flatMap(listOfN(_, oneOf(Drink.whiskies)).map(_.toVector))
 
     override def receive: Receive = {
       case Send => sender() ! gen.sample

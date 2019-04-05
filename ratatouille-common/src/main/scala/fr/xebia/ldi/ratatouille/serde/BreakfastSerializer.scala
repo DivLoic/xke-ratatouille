@@ -2,7 +2,8 @@ package fr.xebia.ldi.ratatouille.serde
 
 import java.util
 
-import fr.xebia.ldi.ratatouille.codec.{Breakfast, Meat, Pastry}
+import fr.xebia.ldi.ratatouille.codec.Breakfast
+import fr.xebia.ldi.ratatouille.codec.Breakfast.{Meat, Pastry}
 import org.apache.kafka.common.serialization.Serializer
 import scodec.{Attempt, Codec, DecodeResult}
 import scodec.bits.BitVector
