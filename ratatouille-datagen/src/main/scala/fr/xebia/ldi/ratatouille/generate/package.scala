@@ -1,15 +1,15 @@
-package fr.xebia.ldi
+package fr.xebia.ldi.ratatouille
 
 import org.apache.kafka.clients.admin.{AdminClient, NewTopic}
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConverters._
 import scala.util.Try
+import scala.collection.JavaConverters._
 
 /**
   * Created by loicmdivad.
   */
-package object ratatouille {
+package object generate {
 
   case class AppConfig(httpServer: HttpServerConfig, kafkaAdmin: KafkaAdminConfig)
 
@@ -21,14 +21,14 @@ package object ratatouille {
     NewTopic(name, partition, replication)
 
   case class KafkaClientConfig(bootstrap: Bootstrap)
-  case class Bootstrap(servers: String)
 
+  case class Bootstrap(servers: String)
 
   trait ConfigurableApp {
 
     private val logger: Logger = LoggerFactory.getLogger(getClass)
 
-    def topicsCreation(kafkaConfig: KafkaClientConfig, appConfig: AppConfig) = {
+    def topicsCreation(kafkaConfig: KafkaClientConfig, appConfig: AppConfig): Try[Unit] = {
       val properties = Map[String, AnyRef]("bootstrap.servers" -> kafkaConfig.bootstrap.servers)
       val client: AdminClient = AdminClient.create(properties.asJava)
       val topics: Vector[NewTopic] = appConfig.kafkaAdmin.topics

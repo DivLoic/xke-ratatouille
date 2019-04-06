@@ -1,5 +1,7 @@
 package fr.xebia.ldi.ratatouille.common.model
 
+import com.sksamuel.avro4s.AvroNamespace
+import fr.xebia.ldi.ratatouille.common.model.Breakfast.Lang.{EN, FR}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast._
 import scodec.codecs.{Discriminated, Discriminator, uint8}
 import scodec.{Codec, codecs}
@@ -7,14 +9,20 @@ import scodec.{Codec, codecs}
 /**
   * Created by loicmdivad.
   */
+@AvroNamespace("ratatouille")
 case class Breakfast(lang: Lang,
                      liquid: Liquid,
                      fruit: Fruit,
                      dishes: Either[Meat, Vector[Pastry]] = Right(Vector.empty)) extends FoodOrder {
 
   override def toString =
-    s"lang: $lang,  drink: $liquid  fruits: $fruit, dishes: " + dishes.getOrElse(dishes.left.get)
-
+      s"(${lang match {case FR() => "Fr"; case EN() => "En"}}) " +
+      s"drink: $liquid,  ".padTo(25, " ").mkString("") +
+      s"fruits: $fruit, ".padTo(25, " ").mkString("") +
+      s"dishes: " + s"${dishes match {
+        case Right(pastries) => pastries.map(_.toString.takeWhile(_ != '('))
+        case Left(meat) => meat
+      }}"
 }
 
 object Breakfast {
@@ -25,6 +33,9 @@ object Breakfast {
 
     case class FR() extends Lang
     case class EN() extends Lang
+
+    object FR extends FR
+    object EN extends EN
 
     implicit val discLang: Discriminated[Lang, Byte] = Discriminated(scodec.codecs.byte)
     implicit val discFr: Discriminator[Lang, FR, Byte] = Discriminator(0x33)
@@ -73,7 +84,9 @@ object Breakfast {
 
   }
 
-  case class Meat(sausages: Int, beacons: Int, eggs: Int)
+  case class Meat(sausages: Int, beacons: Int, eggs: Int) {
+    override def toString: String = s"Meat(sausages = $sausages, beacons = $beacons, eggs = $eggs)"
+  }
 
   object Meat {
 

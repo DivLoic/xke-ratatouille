@@ -1,7 +1,9 @@
 package fr.xebia.ldi.ratatouille.common
 
 import cats.Applicative
+import com.sksamuel.avro4s.{Record, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast.{Meat, Pastry}
+import org.apache.avro.generic.GenericRecord
 import scodec.bits.BitVector
 import scodec.codecs.{byte, cstring}
 import scodec.{Attempt, Codec, DecodeResult, SizeBound}
@@ -60,5 +62,13 @@ package object codec {
 
       override def sizeBound = byte.sizeBound
     }
+
+
+  implicit lazy val symbolFormat: RecordFormat[Symbol] =  new RecordFormat[Symbol] {
+
+    override def from(record: GenericRecord): Symbol = Symbol(RecordFormat[String].from(record))
+
+    override def to(t: Symbol): Record = RecordFormat[String].to(t.name)
+  }
 
 }

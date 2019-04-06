@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.http
+package fr.xebia.ldi.ratatouille.generate.http
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.stream.ActorMaterializer
-import fr.xebia.ldi.ratatouille.http.model.{Command, Exercise, Status}
+import fr.xebia.ldi.ratatouille.generate.http.model.{Command, Exercise, Status}
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
 
 import scala.concurrent.ExecutionContext

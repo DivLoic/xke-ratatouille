@@ -1,15 +1,17 @@
 package fr.xebia.ldi.ratatouille.common.model
 
+import com.sksamuel.avro4s.AvroNamespace
 import fr.xebia.ldi.ratatouille.common.model.Lunch._
 import scodec.codecs.{Discriminated, Discriminator, cstring}
 
 /**
   * Created by loicmdivad.
   */
+@AvroNamespace("ratatouille")
 case class Lunch(name: String, price: Double, `type`: LunchType) extends FoodOrder {
 
   override def toString: String =
-    s"Lunch: $name (${`type`.getClass.getSimpleName.toLowerCase}), price: $price"
+    s"$name (${`type`.getClass.getSimpleName.toLowerCase}), price: ${price}€"
 }
 
 object Lunch {
@@ -54,6 +56,6 @@ object Lunch {
     Lunch("Riz au lait à la vanille - caramel au beurre salé", 9, Dessert)
   )
 
-  class LunchError(line: String) extends
+  final class LunchError(line: String) extends
     Lunch(name = s"Error in line: $line", price = Double.MinValue, `type`= Error)
 }

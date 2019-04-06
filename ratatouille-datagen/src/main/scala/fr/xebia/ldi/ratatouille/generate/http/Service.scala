@@ -1,15 +1,15 @@
-package fr.xebia.ldi.ratatouille.http
+package fr.xebia.ldi.ratatouille.generate.http
 
-import fr.xebia.ldi.ratatouille.exercice.Event.{Down, Running}
-import fr.xebia.ldi.ratatouille.ExercisesPool
-import fr.xebia.ldi.ratatouille.http.model.{Command, Exercise, Status}
+import fr.xebia.ldi.ratatouille.generate.GeneratorPool
+import fr.xebia.ldi.ratatouille.generate.actor.Event.{Down, Running}
+import fr.xebia.ldi.ratatouille.generate.http.model.{Command, Exercise, Status}
 
 /**
   * Created by loicmdivad.
   */
 trait Service {
 
-  implicit val exercisesPool: ExercisesPool
+  implicit val exercisesPool: GeneratorPool
 
   def getStatus =  Status(
     message = "OK!",

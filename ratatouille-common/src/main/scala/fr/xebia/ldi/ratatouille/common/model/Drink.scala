@@ -1,14 +1,22 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import cats.kernel.Monoid
-import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
+import com.sksamuel.avro4s.AvroNamespace
 import fr.xebia.ldi.ratatouille.common.codec
+import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
 import scodec.codecs.{Discriminated, Discriminator}
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 /**
   * Created by loicmdivad.
   */
-case class Drink(name: String, drink: DrinkType, quantity: Int, alcohol: Option[Double]) extends FoodOrder
+@AvroNamespace("ratatouille")
+case class Drink(name: String, `type`: DrinkType, quantity: Int, alcohol: Option[Double]) extends FoodOrder {
+
+  override def toString: String = s"$name, ${quantity}cl.".padTo(60, " ").mkString("") +
+    s"\t\t (${`type`.getClass.getSimpleName})"
+
+}
 
 object Drink {
 
@@ -36,19 +44,6 @@ object Drink {
     implicit val discriminator5: Discriminator[DrinkType, Champagne, Symbol] = Discriminator('Champagne)
   }
 
-
-  case class BeverageCommand(beverages: Vector[Drink])
-
-  implicit val beverageMonoid: Monoid[BeverageCommand] = new Monoid[BeverageCommand]{
-
-    override def empty: BeverageCommand = IncorrectBeverageCommand
-
-    override def combine(x: BeverageCommand, y: BeverageCommand): BeverageCommand =
-      BeverageCommand( x.beverages ++: y.beverages)
-  }
-
-  object IncorrectBeverageCommand extends BeverageCommand(Vector.empty)
-
   val wine0 = Drink("Château Mouton Rothschild Pauillac", Wine, 15, Some(12.5))
   val wine1 = Drink("Château Lafite Rothschild Pauillac", Wine, 15, Some(12.5))
   val wine2 = Drink("Château Margaux", Wine, 15, Some(13.5))
@@ -68,19 +63,28 @@ object Drink {
 
   val champagnes = Vector(champagne0, champagne1, champagne2, champagne3, champagne4, champagne5)
 
-  val whisky1 = Drink("Talisker 18 Year Old", Whisky, 75, Some(45.8))
-  val whisky2 = Drink("Glen Marnoch Speyside", Whisky, 75, Some(40))
-  val whisky3 = Drink("Lagavulin 16 Year Old", Whisky, 75, Some(43))
-  val whisky4 = Drink("Glen Scotia 18 Year Old", Whisky, 75, Some(46))
-  val whisky5 = Drink("Glenmorangie Quinta Ruban 12 Year Old", Whisky, 75, Some(46))
-  val whisky6 = Drink("Ardbeg An Oa", Whisky, 75, Some(46.6))
-  val whisky7 = Drink("The Balvenie 12 Year Old Triple Cask", Whisky, 75, Some(40))
-  val whisky8 = Drink("Aerstone Land Cask 10 Year Old", Whisky, 75, Some(40))
-  val whisky9 = Drink("Glenfiddich Experimental Series - IPA Cask Finish", Whisky, 75, Some(43))
-  val whisky10 = Drink("Loch Lomond 12 Year Old", Whisky, 75, Some(46))
+  val whisky1 = Drink("Talisker 18 Year Old", Whisky, 8, Some(45.8))
+  val whisky2 = Drink("Glen Marnoch Speyside", Whisky, 8, Some(40))
+  val whisky3 = Drink("Lagavulin 16 Year Old", Whisky, 8, Some(43))
+  val whisky4 = Drink("Glen Scotia 18 Year Old", Whisky, 8, Some(46))
+  val whisky5 = Drink("Glenmorangie Quinta Ruban 12 Year Old", Whisky, 8, Some(46))
+  val whisky6 = Drink("Ardbeg An Oa", Whisky, 8, Some(46.6))
+  val whisky7 = Drink("The Balvenie 12 Year Old Triple Cask", Whisky, 8, Some(40))
+  val whisky8 = Drink("Aerstone Land Cask 10 Year Old", Whisky, 8, Some(40))
+  val whisky9 = Drink("Glenfiddich Experimental Series - IPA Cask Finish", Whisky, 8, Some(43))
+  val whisky10 = Drink("Loch Lomond 12 Year Old", Whisky, 8, Some(46))
 
   val whiskies = Vector(whisky1, whisky2, whisky3, whisky4, whisky5, whisky6, whisky7, whisky8, whisky9, whisky10)
 
   val tipunch = Drink("Ti-Punch", Rhum, 5, Some(45.0))
+  val maiTai = Drink("Mai Tai", Rhum, 18, Some(45.0))
+  val mojito = Drink("Mojito", Rhum, 18, Some(45.0))
+  val gingerRhum = Drink("Ginger Rhum", Rhum, 18, Some(45.0))
 
+  val rhums = Vector(tipunch, maiTai, mojito, gingerRhum)
+
+  val flatWater = Drink("Evian", Water, 28, None)
+  val sparklingWater = Drink("San Pellegrino", Water, 28, None)
+
+  val waters = Vector(flatWater, sparklingWater)
 }

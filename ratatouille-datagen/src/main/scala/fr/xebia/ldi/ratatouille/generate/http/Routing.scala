@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.http
+package fr.xebia.ldi.ratatouille.generate.http
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import fr.xebia.ldi.ratatouille.http.route.{StartExercise, Status, StopExercise}
+import fr.xebia.ldi.ratatouille.generate.http.route.{StartExercise, Status, StopExercise}
 
 /**
   * Created by loicmdivad.

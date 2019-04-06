@@ -1,4 +1,4 @@
-package fr.xebia.ldi.ratatouille
+package fr.xebia.ldi.ratatouille.generate
 
 import akka.NotUsed
 import akka.actor.{ActorRef, ActorSystem}
@@ -8,10 +8,10 @@ import akka.kafka.ProducerSettings
 import akka.kafka.scaladsl.Producer
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.{ActorMaterializer, OverflowStrategy}
-import fr.xebia.ldi.ratatouille.exercice.ExerciseOne
-import fr.xebia.ldi.ratatouille.http.Routing
 import fr.xebia.ldi.ratatouille.common.model.FoodOrder
 import fr.xebia.ldi.ratatouille.common.serde.FoodOrderSerde
+import fr.xebia.ldi.ratatouille.generate.actor.{ActorGenA, ActorGenB, ActorGenC, ActorGenD}
+import fr.xebia.ldi.ratatouille.generate.http.Routing
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.utils.Bytes
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContextExecutor
 /**
   * Created by loicmdivad.
   */
-object Main extends App with ConfigurableApp with Routing {
+object GeneratorServer extends App with ConfigurableApp with Routing {
 
   val logger = LoggerFactory.getLogger(getClass)
 
@@ -41,11 +41,15 @@ object Main extends App with ConfigurableApp with Routing {
     .to(Sink.ignore)
     .run()
 
-  implicit val exercisesPool: ExercisesPool = new ExercisesPool(
-    ExerciseOne()
+  implicit val exercisesPool: GeneratorPool = new GeneratorPool(
+    ActorGenA(),
+    ActorGenB(),
+    ActorGenC(),
+    ActorGenD(),
   )
 
   sys.addShutdownHook {
+    logger error "Closing materializer and actor system."
     materializer.shutdown()
     system.terminate()
   }
@@ -59,6 +63,8 @@ object Main extends App with ConfigurableApp with Routing {
   } yield {
 
     topicsCreation(kafkaClientConfig, appConfig)
+
+    logger info s"Binding Generator server to: ${appConfig.httpServer.host}:${appConfig.httpServer.port}"
 
     Http().bindAndHandle(
       routes,

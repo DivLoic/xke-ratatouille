@@ -1,4 +1,4 @@
-package fr.xebia.ldi.ratatouille.exercice
+package fr.xebia.ldi.ratatouille.generate.actor
 
 /**
   * Created by loicmdivad.

@@ -30,6 +30,8 @@ subprojects {
         compile group: 'io.circe', name: 'circe-parser_2.12', version: '0.11.1'
         compile group: 'io.circe', name: 'circe-generic_2.12', version: '0.11.1'
 
+        compile group: 'com.sksamuel.avro4s', name: 'avro4s-core_2.12', version: '2.0.4'
+
         compile group: 'com.github.pureconfig', name: 'pureconfig_2.12', version: '0.9.1'
 
         compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -49,6 +51,7 @@ subprojects {
                 '-encoding', 'utf8',
                 '-Xfatal-warnings',
                 '-language:postfixOps',
+                //'-Ypartial-unification',
                 '-Xmacro-settings:materialize-derivations'
         ]
     }
@@ -58,9 +61,9 @@ project(':ratatouille-streams') {
 
     task demo(type: JavaExec) {
 
-        classpath = sourceSets.main.runtimeClasspath
+        main = 'fr.xebia.ldi.ratatouille.Demo'
 
-        main = 'fr.xebia.ldi.ratatouille.ExampleThree'
+        classpath = sourceSets.main.runtimeClasspath
 
         jvmArgs = [
                 "-Djava.rmi.server.hostname=127.0.0.1,",
@@ -69,7 +72,7 @@ project(':ratatouille-streams') {
                 "-Dcom.sun.management.jmxremote.ssl=false,",
                 "-Dcom.sun.management.jmxremote.authenticate=false,",
                 "-javaagent:${workingDir}/../docker/volumes/jmx_prometheus_javaagent-0.3.1.jar=9001:"+
-                        "${workingDir}/src/main/resources/streams-jmx.yaml",
+                        "${workingDir}/src/main/resources/streams-jmx.yaml"
         ]
 
     }

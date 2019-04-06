@@ -1,8 +1,8 @@
-package fr.xebia.ldi.ratatouille.http.route
+package fr.xebia.ldi.ratatouille.generate.http.route
 
 import akka.http.scaladsl.server.Directives.{complete, get, pathEndOrSingleSlash, pathPrefix}
 import akka.http.scaladsl.server.Route
-import fr.xebia.ldi.ratatouille.http.{Protocol, Service}
+import fr.xebia.ldi.ratatouille.generate.http.{Protocol, Service}
 import akka.http.scaladsl.server.Directives._
 
 /**

@@ -61,6 +61,20 @@ services:
     networks:
     - ratatouille
 
+  landoop-schema-registry-ui:
+    image: landoop/schema-registry-ui:latest
+    depends_on:
+    - schema-registry
+    ports:
+    - "8888:8000"
+    hostname: schema-registry-ui
+    container_name: schema-registry-ui
+    environment:
+      SCHEMAREGISTRY_URL: 'http://schema-registry:8081'
+      PROXY: "true"
+    networks:
+    - ratatouille
+
 #  elasticsearch:
 #    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
 #    hostname: elasticsearch

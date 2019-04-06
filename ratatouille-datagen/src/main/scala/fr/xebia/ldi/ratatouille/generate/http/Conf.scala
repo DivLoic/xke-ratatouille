@@ -1,4 +1,4 @@
-package fr.xebia.ldi.ratatouille.http
+package fr.xebia.ldi.ratatouille.generate.http
 
 /**
   * Created by loicmdivad.

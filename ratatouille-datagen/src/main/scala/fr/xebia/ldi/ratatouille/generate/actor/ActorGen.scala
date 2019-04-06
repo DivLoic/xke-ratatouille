@@ -1,11 +1,11 @@
-package fr.xebia.ldi.ratatouille.exercice
+package fr.xebia.ldi.ratatouille.generate.actor
 
 import akka.NotUsed
 import akka.actor.{Actor, ActorRef}
 import akka.kafka.ProducerMessage.Message
 import akka.pattern.ask
 import akka.util.Timeout
-import fr.xebia.ldi.ratatouille.exercice.Event._
+import fr.xebia.ldi.ratatouille.generate.actor.Event._
 import org.scalacheck.Gen
 import org.scalacheck.Gen.Parameters
 import org.scalacheck.rng.Seed
@@ -17,7 +17,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 /**
   * Created by loicmdivad.
   */
-trait Exercise {
+trait ActorGen {
 
   def name: String
 
@@ -44,14 +44,38 @@ trait Exercise {
 }
 
 
-object Exercise {
+object ActorGen {
 
-  trait ExerciseWorker[K, V] extends Actor {
+  trait Worker[K, V] extends Actor {
+
+    protected val title: String
+
+    protected val parent: ActorRef
+
+    protected var status: State = Standby
 
     protected val logger: Logger = LoggerFactory.getLogger(getClass)
 
-    def delay: FiniteDuration = Gen.choose(500 milli, 1.5 second).pureApply(Parameters.default, Seed.random())
+    def coldStart: FiniteDuration
 
     def produce: Message[K, V, NotUsed]
+
+    def delay: FiniteDuration = Gen.choose(500 milli, 1.5 second).pureApply(Parameters.default, Seed.random())
+
+    override def receive: Receive = {
+      case Start => logger info s"$title - receive start call"
+        context.system.scheduler.scheduleOnce(coldStart, self, Send)(context.dispatcher)
+        status = Running
+        sender ! Done
+
+      case Stop => logger info s"$title - receive stop call"
+        status = Standby
+        sender ! Done
+
+      case Send => parent ! produce
+        if(status == Running) context.system.scheduler.scheduleOnce(delay, self, Send)(context.dispatcher)
+
+      case _ => logger warn s"$title - receive something unknown"
+    }
   }
 }

@@ -8,4 +8,3 @@ docker {
     files 'public/', 'docker/', 'firebase.json'
     dockerfile file('docker/Dockerfile')
 }
-
