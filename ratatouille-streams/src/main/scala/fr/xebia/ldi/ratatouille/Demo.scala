@@ -49,6 +49,7 @@ object Demo extends App with DemoImplicits {
   breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("breakfast"))
   lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("lunch"))
   drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("drink"))
+  dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("drink"))
 
   breakfasts.mapValues(food => food.toAvro[Breakfast]).to("decoded-breakfast")
 

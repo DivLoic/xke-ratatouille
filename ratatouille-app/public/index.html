@@ -3,13 +3,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link rel="stylesheet" href="./css/main.css">
     <link rel="stylesheet" href="./css/toggle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
     <title>Xke Ratatouille - Kafka-Streams & the poison pill</title>
 </head>
 <body>
@@ -29,30 +27,13 @@
 </header>
 <br/><br/>
 <main class="container-fluid">
-
-    <!--<br/>-->
-    <!--    <div class="row" id="identity-pad">
-            <div class="col col-3"></div>
-            <form class="form-inline col col-6">
-                <div class="form-group mb-2">
-                    <label for="inputEmail2" class="sr-only">Email</label>
-                    <input type="text" class="form-control" id="inputEmail2" placeholder="Email">
-                </div>
-                <div class="form-group mx-sm-3 mb-2">
-                    <label for="inputPassword2" class="sr-only">Password</label>
-                    <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
-                </div>
-                <button type="button" class="btn btn-primary mb-2">Confirm identity</button>
-            </form>
-        </div>-->
-
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Data</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Generator</li>
-        </ol>
-    </nav>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Data</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Generator</li>
+            </ol>
+        </nav>
 
     <br/>
 
@@ -61,15 +42,15 @@
         <table class="table col col-sm-10">
             <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Material</th>
+                <th scope="row">#</th>
+                <th scope="col">Exercise</th>
                 <th scope="col">Description</th>
-                <th scope="col" style="text-align: center;">Active</th>
+                <th scope="col" style="text-align: center;">Status</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <th scope="row">1</th>
+                <th scope="row">🥞</th>
                 <td>Exercise 1</td>
                 <td>Breakfast</td>
                 <td>
@@ -82,7 +63,7 @@
                 </td>
             </tr>
             <tr>
-                <th scope="row">2</th>
+                <th scope="row">🍔</th>
                 <td>Exercise 2</td>
                 <td>Lunch</td>
                 <td>
@@ -95,14 +76,27 @@
                 </td>
             </tr>
             <tr>
-                <th scope="row">3</th>
+                <th scope="row">🍹</th>
                 <td>Exercise 3</td>
-                <td>Drinks</td>
+                <td>Drink</td>
                 <td>
                     <ul class="tg-list">
                         <li class="tg-list-item">
-                            <input title="exercise1" class="tgl tgl-ios" id="tg3" type="checkbox"/>
+                            <input title="exercise3" class="tgl tgl-ios" id="tg3" type="checkbox"/>
                             <label class="tgl-btn" for="tg3"></label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">🕯️🍷🍴</th>
+                <td>Exercise 4</td>
+                <td>Dinner</td>
+                <td>
+                    <ul class="tg-list">
+                        <li class="tg-list-item">
+                            <input title="exercise4" class="tgl tgl-ios" id="tg4" type="checkbox"/>
+                            <label class="tgl-btn" for="tg4"></label>
                         </li>
                     </ul>
                 </td>
@@ -111,9 +105,6 @@
         </table>
     </div>
 </main>
-
-<!-- Optional JavaScript -->
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
@@ -122,25 +113,12 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
-<!--<script src="/__/firebase/5.8.3/firebase-app.js"></script>
-<script src="/__/firebase/5.8.3/firebase-auth.js"></script>
-<script src="/__/firebase/5.8.3/firebase-database.js"></script>
-<script>
-    var config = {
-        apiKey: "AIzaSyB3rNJbbhvpA2G0tXf532mvtL0DO9KOYII",
-        authDomain: "xke-ratatouille.firebaseapp.com",
-        databaseURL: "https://xke-ratatouille.firebaseio.com",
-        projectId: "xke-ratatouille",
-        storageBucket: "xke-ratatouille.appspot.com",
-        messagingSenderId: "925598217487"
-    };
-    firebase.initializeApp(config);
-</script>-->
 <script>
     var EX = {
         "breakfast": "tg1",
         "lunch": "tg2",
-        "drink": "tg3"
+        "drink": "tg3",
+        "dinner": "tg4"
     };
 
     $.get("http://localhost:7070/api/status", function (data) {
@@ -171,6 +149,14 @@
         });
     });
 
+
+    $("#tg4").click(function () {
+        var action = ($(this).is(":checked")) ? "start" : "stop";
+        $.get("http://localhost:7070/api/" + action + "/dinner", function (data) {
+            console.log(data);
+        });
+    });
+
     var typed = new Typed("#typed", {
         // Waits 1000ms after typing "First"
         strings: ["XKE RATATOUILLE"],
@@ -183,7 +169,6 @@
                 .animate({top: 0, opacity: 1}, 800)
     }
     });
-
 </script>
 </body>
 </html>

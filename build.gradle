@@ -1,4 +1,4 @@
-subprojects {
+configure(subprojects - project(":ratatouille-app")){
 
     group = 'fr.xebia.ldi'
     version = '0.1.0-SNAPSHOT'

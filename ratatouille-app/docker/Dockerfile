@@ -16,7 +16,6 @@ RUN mkdir -p /root/www/site/
 WORKDIR /root/www/site/
 
 ADD 404.html /root/www/site/
-ADD script.js /root/www/site/
 ADD index.html /root/www/site/
 ADD css/ /root/www/site/css/
 ADD fonts/ /root/www/site/font/

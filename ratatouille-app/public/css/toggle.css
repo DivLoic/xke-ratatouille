@@ -87,3 +87,11 @@ li {
 .tgl-ios:checked + .tgl-btn:active:after {
     margin-left: -0.8em;
 }
+
+ul.tg-list li.tg-list-item {
+    width: 100%;
+}
+ul.tg-list li.tg-list-item label {
+    margin-left: 23%
+}
+

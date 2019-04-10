@@ -59,8 +59,9 @@ private[common] object Buggy {
   lazy val dinnerEvidence: BuggyCodec[Dinner] = (bits: BitVector) => decode[Dinner](bits)
     .flatMap { cmd =>
       cmd.value.moment.zone match {
-        case zone if zone.toString equals ZoneId.SHORT_IDS("AET") =>
-          Attempt.failure(Err(s"Failed to decode dinner: ${bits.toHex}" + cstring.decode(ZoneId.SHORT_IDS("AET"))))
+        case zone if zone.toString equals ZoneId.SHORT_IDS.get("AET") =>
+          Attempt.failure(Err(s"Failed to decode dinner: ${bits.toHex}" +
+            cstring.encode(ZoneId.SHORT_IDS.get("AET")).require.toHex))
         case _ => Attempt.successful(cmd)
       }
     }

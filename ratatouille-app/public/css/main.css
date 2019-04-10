@@ -30,3 +30,8 @@ p.subtitle  {
     color: white;
     text-align: center;
 }
+
+th[scope=row] {
+    font-size: x-large;
+    text-align: center;
+}
