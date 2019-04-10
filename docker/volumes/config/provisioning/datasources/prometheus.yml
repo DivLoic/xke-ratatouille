@@ -12,11 +12,9 @@ datasources:
   url: http://localhost:9090
   isDefault: true
 
-  jsonData:
-    graphiteVersion: "1.1"
-    tlsAuth: false
-    tlsAuthWithCACert: false
-
+#  jsonData:
+#    graphiteVersion: "1.1"
+#    tlsAuth: false
+#    tlsAuthWithCACert: false
   version: 1
-
   editable: false
