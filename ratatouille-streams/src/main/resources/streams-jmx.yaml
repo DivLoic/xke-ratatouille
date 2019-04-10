@@ -1,0 +1,7 @@
+---
+global:
+  scrape_interval:     0.5s
+  evaluation_interval: 0.5s
+
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true

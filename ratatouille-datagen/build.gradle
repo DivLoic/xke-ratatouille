@@ -1,7 +1,16 @@
-plugins { }
+plugins { id 'com.palantir.docker' version '0.21.0' }
+
+apply plugin: 'com.palantir.docker'
+
+mainClassName = 'fr.xebia.ldi.ratatouille.generate.GeneratorServer'
+
+docker {
+    tags version
+    name 'ratatouille-datagen'
+    files tasks.distTar.outputs, 'docker/'
+    dockerfile file('docker/Dockerfile')
+}
 
 dependencies {
-
     compile project(':ratatouille-common')
-
 }

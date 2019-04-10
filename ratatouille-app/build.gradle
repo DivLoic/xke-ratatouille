@@ -1,5 +1,10 @@
-plugins { }
+plugins { id 'com.palantir.docker' version '0.21.0' }
 
-dependencies {
+apply plugin: 'com.palantir.docker'
 
+docker {
+    tags version
+    name  'ratatouille-app'
+    files 'public/', 'docker/', 'firebase.json'
+    dockerfile file('docker/Dockerfile')
 }

@@ -1,42 +1,158 @@
 version: '3.7'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-    hostname: elasticsearch
-    ports:
-    - 9200:9200
-    environment:
-    - cluster.name=docker-cluster
-    - bootstrap.memory_lock=true
-    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:6.6.1
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.1.2
+    hostname: zookeeper
+    container_name: zookeeper
     ports:
-    - "5601:5601"
+    - 2181:2181
     environment:
-      SERVER_NAME: kibana
-      ELASTICSEARCH_HOSTS: elasticsearch:9200
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+    - ratatouille
+
+  kafka:
+    image: confluentinc/cp-kafka:5.1.2
+    hostname: kafka
+    container_name: kafka
+    depends_on:
+    - zookeeper
+    ports:
+    - 9092:9092
+    - 9094:9094
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_JMX_OPTS: >
+        -Djava.rmi.server.hostname=kafka
+        -Dcom.sun.management.jmxremote.rmi.port=9093
+        -Dcom.sun.management.jmxremote=true
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -javaagent:/var/lib/share/java/prometheus.jar=9094:/etc/kafka/kafka-jmx.yml
+      JMX_PORT: 9093
+    volumes:
+      - ./docker/volumes/config/kafka-jmx.yml/:/etc/kafka/kafka-jmx.yml
+      - ./docker/volumes/jmx_prometheus_javaagent-0.3.1.jar/:/var/lib/share/java/prometheus.jar
+    networks:
+    - ratatouille
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:5.1.2
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+    - zookeeper
+    - kafka
+    ports:
+    - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
+      SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
+    networks:
+    - ratatouille
+
+  landoop-schema-registry-ui:
+    image: landoop/schema-registry-ui:latest
+    depends_on:
+    - schema-registry
+    ports:
+    - "8888:8000"
+    hostname: schema-registry-ui
+    container_name: schema-registry-ui
+    environment:
+      SCHEMAREGISTRY_URL: 'http://schema-registry:8081'
+      PROXY: "true"
+    networks:
+    - ratatouille
+
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+#    hostname: elasticsearch
+#    container_name: elasticsearch
+#    ports:
+#    - 9200:9200
+#    environment:
+#    - cluster.name=docker-cluster
+#    - bootstrap.memory_lock=true
+#    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:6.6.1
+#    hostname: kibana
+#    container_name: kibana
+#    ports:
+#    - "5601:5601"
+#    environment:
+#      SERVER_NAME: kibana
+#      ELASTICSEARCH_HOSTS: elasticsearch:9200
 
   prometheus:
     image: prom/prometheus:v2.8.1
     hostname: prometheus
+    container_name: prometheus
     ports:
       - "9090:9090"
     command: --config.file=/etc/prometheus/prometheus.yml
     volumes:
       - ./docker/volumes/config/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+    - ratatouille
 
   grafana:
     image: grafana/grafana:4.6.3
     hostname: grafana
+    container_name: grafana
+    environment:
+      GF_PATHS_PROVISIONING: /var/lib/grafana/provisioning/dashboards
     ports:
     - "3000:3000"
     volumes:
       - ./docker/volumes/data/graphana/:/var/lib/grafana
+      - ./docker/volumes/config/dashboards/:/var/lib/grafana/dashboards
+      - ./docker/volumes/config/datasources/:/var/lib/grafana/datasources
+      - ./docker/volumes/config/provisioning/:/var/lib/grafana/provisioning
     depends_on:
     - prometheus
+    networks:
+      - ratatouille
+
+  ratatouille-datagen:
+    image: ratatouille-datagen
+    container_name: ratatouille-datagen
+    environment:
+      HOST: 'ratatouille-datagen'
+      PORT: '7070'
+      KAFKA_BROKERS: 'kafka:29092'
+    ports:
+    - "7070:7070"
+    depends_on:
+    - grafana
+    networks:
+    - ratatouille
+
+  ratatouille-app:
+    image: ratatouille-app
+    container_name: ratatouille-app
+    ports:
+    - "8080:8080"
+    depends_on:
+    - ratatouille-datagen
+    networks:
+    - ratatouille
+
+networks:
+  ratatouille:
