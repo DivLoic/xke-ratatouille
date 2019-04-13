@@ -66,8 +66,8 @@ project(':ratatouille-streams') {
         classpath = sourceSets.main.runtimeClasspath
 
         jvmArgs = [
-                "-Djava.rmi.server.hostname=127.0.0.1,",
                 "-Djava.rmi.server.port=7071,",
+                "-Djava.rmi.server.hostname=127.0.0.1,",
                 "-Dcom.sun.management.jmxremote=true,",
                 "-Dcom.sun.management.jmxremote.ssl=false,",
                 "-Dcom.sun.management.jmxremote.authenticate=false,",

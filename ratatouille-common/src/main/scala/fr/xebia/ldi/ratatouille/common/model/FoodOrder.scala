@@ -1,6 +1,7 @@
 package fr.xebia.ldi.ratatouille.common.model
 
 import com.sksamuel.avro4s.RecordFormat
+import fr.xebia.ldi.ratatouille.common.codec.Buggy
 import org.apache.avro.generic.GenericRecord
 import scodec.Codec
 import scodec.codecs._
@@ -38,7 +39,7 @@ object FoodOrder {
     .typecase(BreakfastType, Codec[Breakfast])
     .typecase(LunchType, Codec[Lunch])
     .typecase(DrinkType, Codec[Drink])
-    .typecase(DinnerType, Codec[Dinner])
+    .typecase(DinnerType, Codec[Dinner](Buggy.dinnerEvidence))
 
   implicit lazy val BreakfastFormat: RecordFormat[Breakfast] = RecordFormat[Breakfast]
   implicit lazy val LunchFormat: RecordFormat[Lunch] = RecordFormat[Lunch]

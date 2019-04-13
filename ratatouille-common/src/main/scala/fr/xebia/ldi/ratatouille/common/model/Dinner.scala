@@ -9,7 +9,7 @@ import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
-case class Dinner(dish: Command, @AvroName("client") mayBeClient: Option[Client], moment: Moment) extends FoodOrder
+case class Dinner(dish: Command, @AvroName("client") mayBeClient: Option[Client], moment: Moment, zone: String) extends FoodOrder
 
 object Dinner {
 
@@ -17,7 +17,7 @@ object Dinner {
 
   case class Command(name: String, price: Double)
 
-  case class Moment(ts: Long, zone: String)
+  case class Moment(region: String, ts: Long)
 
   val commands: Vector[Command] = Vector(
     Command("Choucroute de la mer - Bar, haddock, saumon d'Ecosse, Langoustine, beurre blanc", 29.00),
