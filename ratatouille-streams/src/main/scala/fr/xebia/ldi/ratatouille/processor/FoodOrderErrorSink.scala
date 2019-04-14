@@ -2,12 +2,10 @@ package fr.xebia.ldi.ratatouille.processor
 
 import fr.xebia.ldi.ratatouille.common.model.FoodOrder
 import org.apache.kafka.common.MetricName
-import org.apache.kafka.common.metrics.stats.{Count, Max, Rate, Sum}
-import org.apache.kafka.common.metrics.{MetricConfig, Metrics, Sensor}
-import org.apache.kafka.streams.StreamsMetrics
+import org.apache.kafka.common.metrics.Sensor
+import org.apache.kafka.common.metrics.stats.{Count, Rate, Sum}
 import org.apache.kafka.streams.kstream.ValueTransformer
 import org.apache.kafka.streams.processor.ProcessorContext
-import org.apache.kafka.streams.processor.internals.metrics.CumulativeCount
 
 import scala.collection.JavaConverters._
 
@@ -32,7 +30,6 @@ class FoodOrderErrorSink extends ValueTransformer[FoodOrder, Unit] {
 
     sensor = this.context.metrics.addSensor("food-errors", Sensor.RecordingLevel.INFO)
 
-    sensor.add(metricName("ccount"), new CumulativeCount())
     sensor.add(metricName("count"), new Count())
     sensor.add(metricName("rate"), new Rate())
     sensor.add(metricName("sum"), new Sum())

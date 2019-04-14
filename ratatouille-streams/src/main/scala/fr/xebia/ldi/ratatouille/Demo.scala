@@ -40,7 +40,7 @@ object Demo extends App with DemoImplicits {
   val avroSede = new GenericAvroSerde()
   avroSede.configure(Map("schema.registry.url" -> "http://localhost:8081").asJava, false)
 
-  implicit val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde)
+  implicit val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, SentinelValueSerde.serde)
   implicit val produced: Produced[Bytes, GenericRecord] = Produced.`with`(Serdes.Bytes, avroSede)
 
   val builder: StreamsBuilder = new StreamsBuilder()

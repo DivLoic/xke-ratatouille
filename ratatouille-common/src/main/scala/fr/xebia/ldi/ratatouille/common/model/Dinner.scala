@@ -9,7 +9,7 @@ import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
-case class Dinner(dish: Command, @AvroName("client") mayBeClient: Option[Client], moment: Moment, zone: String) extends FoodOrder
+case class Dinner(dish: Command, @AvroName("client") maybeClient: Option[Client], moment: Moment, zone: String) extends FoodOrder
 
 object Dinner {
 
