@@ -3,7 +3,7 @@ package fr.xebia.ldi.ratatouille.handler
 import java.util
 
 import com.sksamuel.avro4s.RecordFormat
-import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler.{DLQMessage, dqlFormat}
+import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler.{DLQMessage, dqlFormat, recordToAvro}
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
@@ -26,14 +26,9 @@ class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHand
                       record: ConsumerRecord[Array[Byte], Array[Byte]],
                       exception: Exception): DeserializationHandlerResponse = {
 
-    val valueMessage = DLQMessage(
-      record.value,
-      BitVector(record.value).toHex,
-      exception.getMessage,
-      exception.getStackTrace.toVector.map(_.toString)
-    )
+    val valueMessage: GenericRecord = recordToAvro(record, exception)
 
-    producer.send(new ProducerRecord(topic, null, record.timestamp, record.key, dqlFormat.to(valueMessage)))
+    producer.send(new ProducerRecord(topic, null, record.timestamp, record.key, valueMessage))
 
     DeserializationHandlerResponse.CONTINUE
   }
@@ -52,8 +47,17 @@ class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHand
 
 object DeadLetterQueueFoodExceptionHandler {
 
-  case class DLQMessage(origin: Array[Byte], hexa: String, message: String, traces: Vector[String])
-
   implicit val dqlFormat: RecordFormat[DLQMessage] = RecordFormat[DLQMessage]
 
+  def recordToAvro(record: ConsumerRecord[Array[Byte], Array[Byte]], exception: Exception): GenericRecord = dqlFormat
+    .to(
+      DLQMessage(
+      record.value,
+      BitVector(record.value).toHex,
+      exception.getMessage,
+      exception.getStackTrace.toVector.map(_.toString)
+      )
+    )
+
+  case class DLQMessage(origin: Array[Byte], hexa: String, message: String, traces: Vector[String])
 }

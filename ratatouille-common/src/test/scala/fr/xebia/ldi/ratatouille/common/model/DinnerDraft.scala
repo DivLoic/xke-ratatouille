@@ -5,6 +5,9 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 import scodec.{Attempt, Err, codecs}
+import scodec.codecs.implicits._
+import scodec.codecs._
+import scodec.bits._
 import scodec.codecs.cstring
 
 /**
@@ -12,15 +15,10 @@ import scodec.codecs.cstring
   */
 object DinnerDraft extends App {
 
-/*  println(cstring.encode("AET").require.toHex)
+  val chunk = cstring.decode(hex"41455400".bits).require.value
 
-  println(ZoneId.of(ZoneId.SHORT_IDS.get("AET")).getId)
-  println(ZoneId.of(ZoneId.SHORT_IDS.get("AET")).getDisplayName(TextStyle.SHORT, Locale.FRENCH))
-
-  println(ZoneId.of(ZoneId.SHORT_IDS.get("AET")).getDisplayName(TextStyle.FULL_STANDALONE, Locale.FRENCH))
-
-  println(codecs.utf8.encode("Côte Est (Nouvelle-Galles du Sud)").require.toHex)*/
-
-  Attempt.failure(Err("???")).require
+  println(s"Frame = $chunk")
+  println()
+  println(ZoneId.SHORT_IDS.get(chunk))
 
 }

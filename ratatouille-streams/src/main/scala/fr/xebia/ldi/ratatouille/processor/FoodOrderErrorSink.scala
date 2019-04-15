@@ -20,9 +20,18 @@ class FoodOrderErrorSink extends ValueTransformer[FoodOrder, Unit] {
 
   def metricName(stat: String) = new MetricName(
     s"food-errors-$stat",
+
     "custom-metrics",
+
     "Stats related to the food command deserialization failure",
-    Map("app_id" -> context.applicationId(), "task_id" -> context.taskId().toString).asJava
+
+    Map(
+
+      "app_id" -> context.applicationId(),
+
+      "task_id" -> context.taskId().toString
+
+    ).asJava
   )
 
   override def init(context: ProcessorContext): Unit = {

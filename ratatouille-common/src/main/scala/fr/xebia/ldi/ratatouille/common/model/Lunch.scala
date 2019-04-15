@@ -11,7 +11,7 @@ import scodec.codecs.{Discriminated, Discriminator, cstring}
 case class Lunch(name: String, price: Double, `type`: LunchType) extends FoodOrder {
 
   override def toString: String =
-    s"$name (${`type`.getClass.getSimpleName.toLowerCase}), price: ${price}€"
+    s"$name (${`type`.getClass.getSimpleName.toLowerCase}),".padTo(90, " ").mkString("") + s"price: ${price}€"
 }
 
 object Lunch {
