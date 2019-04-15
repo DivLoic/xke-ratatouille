@@ -15,7 +15,7 @@ import scodec.codecs.cstring
   */
 object DinnerDraft extends App {
 
-  val chunk = cstring.decode(hex"41455400".bits).require.value
+  val chunk = cstring.decode(???).require.value
 
   println(s"Frame = $chunk")
   println()

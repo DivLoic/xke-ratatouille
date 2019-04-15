@@ -30,7 +30,9 @@ class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHand
 
     producer.send(new ProducerRecord(topic, null, record.timestamp, record.key, valueMessage))
 
-    DeserializationHandlerResponse.CONTINUE
+    // todo: continue
+    //DeserializationHandlerResponse;
+    ???
   }
 
   override def configure(configs: util.Map[String, _]): Unit = {
