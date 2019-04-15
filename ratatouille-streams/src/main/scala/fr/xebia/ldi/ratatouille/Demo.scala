@@ -6,8 +6,8 @@ import io.confluent.kafka.streams.serdes.avro.{GenericAvroSerde, GenericAvroSeri
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.{LogAndContinueExceptionHandler, LogAndFailExceptionHandler}
-import org.apache.kafka.streams.kstream.{Printed, Produced}
-import org.apache.kafka.streams.scala.kstream.Consumed
+import org.apache.kafka.streams.kstream.Printed
+import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}
 import org.apache.kafka.streams.scala.{Serdes, StreamsBuilder}
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import FoodOrder.{BreakfastFormat, DinnerFormat, DrinkFormat, LunchFormat}
@@ -27,8 +27,8 @@ import scala.collection.JavaConverters._
 object Demo extends App with DemoImplicits {
 
   val config = Map(
-    StreamsConfig.APPLICATION_ID_CONFIG -> "answer-one-breakfast",
     StreamsConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092",
+    StreamsConfig.APPLICATION_ID_CONFIG -> "devoxx-2019-appid",
     s"dlq.topic.name" -> "dlq-food-order",
     s"dlq.schema.registry.url" -> "http://localhost:8081",
     s"dlq.${StreamsConfig.BOOTSTRAP_SERVERS_CONFIG}" -> "localhost:9092",

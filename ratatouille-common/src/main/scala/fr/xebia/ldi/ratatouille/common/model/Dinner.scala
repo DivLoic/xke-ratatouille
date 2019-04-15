@@ -1,6 +1,8 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import java.util.UUID
+import java.time.{Instant, ZoneId}
+import java.time.format.DateTimeFormatter
+import java.util.{Locale, UUID}
 
 import com.sksamuel.avro4s.{AvroName, AvroNamespace}
 import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
@@ -9,7 +11,16 @@ import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
-case class Dinner(dish: Command, @AvroName("client") maybeClient: Option[Client], moment: Moment, zone: String) extends FoodOrder
+case class Dinner(dish: Command,
+                  @AvroName("client") maybeClient: Option[Client],
+                  moment: Moment,
+                  zone: String) extends FoodOrder {
+
+  override def toString: String =
+    s"${dish.name}".padTo(100, " ").mkString("") + DateTimeFormatter.ofPattern("EEE d MMM yyyy h:mm a", Locale.FRANCE)
+      .withZone(ZoneId.of(moment.region)).format(Instant.ofEpochMilli(moment.ts)) + s" - ${moment.region}"
+
+}
 
 object Dinner {
 
