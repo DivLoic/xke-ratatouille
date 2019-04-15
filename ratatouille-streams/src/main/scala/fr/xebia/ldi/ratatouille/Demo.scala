@@ -58,13 +58,12 @@ object Demo extends App with DemoImplicits {
       (_, _) => true
     )
 
-  breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("breakfast"))
 
-  lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("lunch"))
+  breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(BreakfastLabel))
+  lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(LunchLabel))
+  drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DrinkLabel))
+  dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DinnerLabel))
 
-  drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("drink"))
-
-  dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel("dinner"))
 
   breakfasts.mapValues(food => food.toAvro[Breakfast]).to("decoded-breakfast")
 
@@ -77,7 +76,6 @@ object Demo extends App with DemoImplicits {
   dinners.mapValues(food => food.toAvro[Dinner]).to("decoded-dinner")
 
   others.to("decoded-other")(Produced.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde))
-
 
   val streams: KafkaStreams = new KafkaStreams(builder.build(), config.toProperties)
 
