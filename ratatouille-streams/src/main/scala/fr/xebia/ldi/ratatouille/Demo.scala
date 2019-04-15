@@ -10,6 +10,9 @@ import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.LogAndFailExceptionHandler
 import org.apache.kafka.streams.kstream.Printed
 import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}
+import org.apache.kafka.streams.errors.{LogAndContinueExceptionHandler, LogAndFailExceptionHandler}
+import org.apache.kafka.streams.kstream.Printed
+import org.apache.kafka.streams.scala.kstream.{Consumed, KStream, Produced}
 import org.apache.kafka.streams.scala.{Serdes, StreamsBuilder}
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import FoodOrder.{BreakfastFormat, DinnerFormat, DrinkFormat, LunchFormat}
@@ -42,25 +45,27 @@ object Demo extends App with DemoImplicits {
   val avroSede = new GenericAvroSerde()
   avroSede.configure(Map("schema.registry.url" -> "http://localhost:8081").asJava, false)
 
-  // todo: configure
-  // todo: define implicitly
-  val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, ???)
-  val produced: Produced[Bytes, GenericRecord] = Produced.`with`(Serdes.Bytes, ???)
+  implicit val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde)
+  implicit val produced: Produced[Bytes, GenericRecord] = Produced.`with`(Serdes.Bytes, avroSede)
 
   val builder: StreamsBuilder = new StreamsBuilder()
 
-  builder.stream[Bytes, FoodOrder]("input-food-order")(consumed)
+  val kstreams: KStream[Bytes, FoodOrder] = builder.stream[Bytes, FoodOrder]("input-food-order")
 
-  // todo: branch
+  val Array(breakfasts, lunches, other) = kstreams.branch(
+    (_, value) => value.isInstanceOf[Breakfast],
+    (_, value) => value.isInstanceOf[Lunch],
+    (_, _) => true
+  )
 
-  // breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(BreakfastLabel))
-  // lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(LunchLabel))
+  breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(BreakfastLabel))
+  lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(LunchLabel))
   // drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DrinkLabel))
   // dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DinnerLabel))
 
-  // produce avro .to("decoded-breakfast")
+  breakfasts.mapValues(_.toAvro[Breakfast]).to("decoded-breakfast")
 
-  // produce avro .to("decoded-lunch")
+  lunches.mapValues(_.toAvro[Lunch]).to("decoded-lunch")
 
   // produce avro .to("decoded-drink")
 
@@ -68,8 +73,7 @@ object Demo extends App with DemoImplicits {
 
   // others.to("decoded-other")(Produced.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde))
 
-  // todo: build the stream topology
-  val streams: KafkaStreams = new KafkaStreams(???, config.toProperties)
+  val streams: KafkaStreams = new KafkaStreams(builder.build(), config.toProperties)
 
   streams.cleanUp()
 
