@@ -154,7 +154,7 @@ services:
     ports:
     - "3000:3000"
     volumes:
-    - ./docker/volumes/data/graphana/:/var/lib/grafana
+    # - ./docker/volumes/data/graphana/:/var/lib/grafana
     - ./docker/volumes/config/dashboards/:/etc/grafana/dashboards/
     - ./docker/volumes/config/provisioning/:/etc/grafana/provisioning/
     depends_on:

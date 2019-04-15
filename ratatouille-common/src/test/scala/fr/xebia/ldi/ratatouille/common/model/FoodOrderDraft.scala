@@ -39,6 +39,6 @@ object FoodOrderDraft extends App {
 
   // Dinner_____________________________________________________________________________________________________________
   println("Dinner")
-  println(Codec.encode[FoodOrder](Dinner(Command("Drink Name", 2.0), None, Moment(0L, "Europe/Paris"))).require)
-  println(Codec.decode[FoodOrder](hex"030000000a4472696e6b204e616d6540000000000000000000000000000000000000000c4575726f70652f5061726973".bits).require)
+  println(Codec.encode[FoodOrder](Dinner(Command("Drink Name", 2.0), None, Moment("Europe/Paris", 0L), "ECT")).require)
+  println(Codec.decode[FoodOrder](hex"030000000a4472696e6b204e616d654000000000000000000000000c4575726f70652f5061726973000000000000000000000003454354".bits).require)
 }

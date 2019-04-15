@@ -15,43 +15,9 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 2,
   "links": [],
   "panels": [
     {
-      "alert": {
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                null
-              ],
-              "type": "gt"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "A",
-                "5m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "avg"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "alerting",
-        "frequency": "2s",
-        "handler": 1,
-        "name": "Consumer Record Lag alert",
-        "noDataState": "no_data",
-        "notifications": []
-      },
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -59,12 +25,12 @@
       "datasource": "Prometheus",
       "fill": 1,
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 8,
         "x": 0,
         "y": 0
       },
-      "id": 1,
+      "id": 2,
       "legend": {
         "avg": false,
         "current": false,
@@ -79,7 +45,7 @@
       "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pointradius": 5,
+      "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -88,27 +54,18 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(kafka_consumer_consumer_fetch_manager_metrics_records_lag{job=\"ratatouille\", topic=\"exercise-drink\"}) by (client_id, partition, topic)",
+          "expr": "max(kafka_server_brokertopicmetrics_oneminuterate{name=\"MessagesInPerSec\", topic=~\"input-food-order|decoded-.*\"}) by (topic)",
           "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "topic {{topic}}  / partition {{partition}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{topic}}",
           "refId": "A"
         }
       ],
-      "thresholds": [
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": null
-        }
-      ],
+      "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Consumer Record Lag",
+      "title": "Messages per Topic",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -155,22 +112,21 @@
         "#d44a3a"
       ],
       "datasource": "Prometheus",
-      "decimals": null,
       "format": "none",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
         "show": false,
         "thresholdLabels": false,
-        "thresholdMarkers": false
+        "thresholdMarkers": true
       },
       "gridPos": {
-        "h": 8,
+        "h": 9,
         "w": 8,
         "x": 8,
         "y": 0
       },
-      "id": 2,
+      "id": 4,
       "interval": null,
       "links": [],
       "mappingType": 1,
@@ -201,20 +157,23 @@
       "sparkline": {
         "fillColor": "rgba(31, 118, 189, 0.18)",
         "full": false,
-        "lineColor": "#c15c17",
+        "lineColor": "rgb(31, 120, 193)",
         "show": true
       },
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kafka_streams_serdes_errors_json{job=\"ratatouille\"}",
+          "expr": "sum(rate(kafka_streams_custom_metrics_food_errors_count{job=\"ratatouille\"}[5s])) by (app_id)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "intervalFactor": 1,
+          "legendFormat": "{{app_id}}",
           "refId": "A"
         }
       ],
-      "thresholds": "20,40",
-      "title": "Deserialization Errors",
+      "thresholds": "10,20",
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Sentinel Values",
       "type": "singlestat",
       "valueFontSize": "200%",
       "valueMaps": [
@@ -224,7 +183,232 @@
           "value": "null"
         }
       ],
-      "valueName": "current"
+      "valueName": "avg"
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fill": 1,
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 6,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(rate(kafka_consumer_consumer_node_metrics_incoming_byte_total{job=\"ratatouille\"}[5s])) by (node_id)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "{{node_id}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Panel Title",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "datasource": "Prometheus",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 9
+      },
+      "id": 8,
+      "links": [],
+      "options": {
+        "maxValue": 100,
+        "minValue": 0,
+        "orientation": "auto",
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "thresholds": [
+          {
+            "color": "green",
+            "index": 0,
+            "value": null
+          },
+          {
+            "color": "#EAB839",
+            "index": 1,
+            "value": 60
+          },
+          {
+            "color": "red",
+            "index": 2,
+            "value": 80
+          }
+        ],
+        "valueMappings": [],
+        "valueOptions": {
+          "decimals": null,
+          "prefix": "",
+          "stat": "mean",
+          "suffix": "",
+          "unit": "none"
+        }
+      },
+      "pluginVersion": "6.1.3",
+      "targets": [
+        {
+          "expr": "kafka_streams_custom_metrics_food_errors_count / kafka_server_brokertopicmetrics_meanrate",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Corrupted message ratio",
+      "type": "gauge"
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "fill": 1,
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 8,
+        "y": 9
+      },
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "percentage": false,
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(kafka_consumer_consumer_fetch_manager_metrics_records_lag{job=\"ratatouille\", topic=\"input-food-order\"}) by (clien_id, partition, topic)",
+          "format": "time_series",
+          "intervalFactor": 1,
+          "legendFormat": "topic: {{topic}} / partition {{partition}}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Record Lag",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     },
     {
       "aliasColors": {},
@@ -237,9 +421,9 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 0
+        "y": 9
       },
-      "id": 3,
+      "id": 10,
       "legend": {
         "avg": false,
         "current": false,
@@ -250,11 +434,12 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 3,
+      "links": [],
       "nullPointMode": "null",
       "percentage": false,
-      "pointradius": 5,
-      "points": false,
+      "pointradius": 4,
+      "points": true,
       "renderer": "flot",
       "seriesOverrides": [],
       "spaceLength": 10,
@@ -262,10 +447,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "max(kafka_consumer_consumer_node_metrics_incoming_byte_rate{job=\"ratatouille\"}) by (node_id)",
+          "expr": "max(kafka_server_brokertopicmetrics_oneminuterate{name=\"MessagesInPerSec\", topic=\"dlq-food-order\"}) by (topic)",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Incoming bytes {{node_id}}",
+          "intervalFactor": 1,
+          "legendFormat": "{{topic}}",
           "refId": "A"
         }
       ],
@@ -273,7 +458,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Panel Title",
+      "title": "Dead Letter Queue",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -348,7 +533,7 @@
     ]
   },
   "timezone": "",
-  "title": "Ratatouille Dashboard",
-  "uid": "K-Jyq4gZk",
+  "title": "Ratatouille Devoxx'19",
+  "uid": "YmOgiAgWk",
   "version": 1
 }

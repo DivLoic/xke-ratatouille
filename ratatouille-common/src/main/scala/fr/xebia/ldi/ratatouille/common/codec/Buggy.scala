@@ -8,7 +8,7 @@ import fr.xebia.ldi.ratatouille.common.model.Drink.Wine
 import fr.xebia.ldi.ratatouille.common.model.Lunch.{MainDish, Starter}
 import scodec.Codec._
 import scodec.bits.BitVector
-import scodec.{Attempt, Codec, DecodeResult, Err, SizeBound}
+import scodec.{Attempt, Codec, Err, SizeBound}
 import scodec.codecs._
 import scodec.codecs.implicits._
 
@@ -16,6 +16,8 @@ import scodec.codecs.implicits._
   * Created by loicmdivad.
   */
 private[common] object Buggy {
+
+  final case class BuggyBreakfast(lang: Lang, liquid: Liquid, fruit: Fruit, dishes: Vector[Pastry] = Vector())
 
   trait BuggyCodec[T <: FoodOrder] extends Codec[T] {
 
@@ -25,19 +27,11 @@ private[common] object Buggy {
     def sizeBound: SizeBound = scodec.codecs.byte.sizeBound
   }
 
-  lazy val breakfastEvidence: BuggyCodec[Breakfast] = new BuggyCodec[Breakfast] {
-
-    private case class CodecBreakfast(lang: Lang,
-                                      liquid: Liquid,
-                                      fruit: Fruit,
-                                      dishes: Vector[Pastry] = Vector.empty)
-
-    override def decode(bits: BitVector): Attempt[DecodeResult[Breakfast]] =
-      Codec.decode[CodecBreakfast](bits).map { result =>
-        result.map { cb =>
-          Breakfast(cb.lang, cb.liquid, cb.fruit, Right(cb.dishes))
-        }
-      }
+  lazy val breakfastEvidence: BuggyCodec[Breakfast] = (bits: BitVector) => Codec.decode[BuggyBreakfast](bits)
+    .map { result =>
+    result.map { cb =>
+      Breakfast(cb.lang, cb.liquid, cb.fruit, Right(cb.dishes))
+    }
   }
 
   lazy val lunchEvidence: BuggyCodec[Lunch] = (bits: BitVector) => decode[Lunch](bits)
@@ -58,10 +52,9 @@ private[common] object Buggy {
 
   lazy val dinnerEvidence: BuggyCodec[Dinner] = (bits: BitVector) => decode[Dinner](bits)
     .flatMap { cmd =>
-      cmd.value.moment.zone match {
-        case zone if zone.toString equals ZoneId.SHORT_IDS.get("AET") =>
-          Attempt.failure(Err(s"Failed to decode dinner: ${bits.toHex}" +
-            cstring.encode(ZoneId.SHORT_IDS.get("AET")).require.toHex))
+      cmd.value.moment.region match {
+        case zone if zone.toString equals ZoneId.of("Australia/Sydney").getId =>
+          Attempt.failure(Err(s"moment/zone: Unknown discriminator: AET"))
         case _ => Attempt.successful(cmd)
       }
     }

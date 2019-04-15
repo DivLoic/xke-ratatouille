@@ -2,11 +2,10 @@ package fr.xebia.ldi.ratatouille.processor
 
 import fr.xebia.ldi.ratatouille.common.model.FoodOrder
 import org.apache.kafka.common.MetricName
-import org.apache.kafka.common.metrics.{MetricConfig, Metrics, Sensor}
-import org.apache.kafka.streams.StreamsMetrics
+import org.apache.kafka.common.metrics.Sensor
+import org.apache.kafka.common.metrics.stats.{Count, Rate, Sum}
 import org.apache.kafka.streams.kstream.ValueTransformer
 import org.apache.kafka.streams.processor.ProcessorContext
-import org.apache.kafka.streams.processor.internals.metrics.CumulativeCount
 
 import scala.collection.JavaConverters._
 
@@ -19,28 +18,21 @@ class FoodOrderErrorSink extends ValueTransformer[FoodOrder, Unit] {
 
   var context: ProcessorContext = _
 
+  def metricName(stat: String) = new MetricName(
+    s"food-errors-$stat",
+    "custom-metrics",
+    "Stats related to the food command deserialization failure",
+    Map("app_id" -> context.applicationId(), "task_id" -> context.taskId().toString).asJava
+  )
+
   override def init(context: ProcessorContext): Unit = {
     this.context = context
 
-    val streamsMetrics: StreamsMetrics = this.context.metrics
+    sensor = this.context.metrics.addSensor("food-errors", Sensor.RecordingLevel.INFO)
 
-    val metricTags = Map("action" -> "none")
-
-    val metricConfig = new MetricConfig().tags(metricTags.asJava)
-
-    val metrics = new Metrics(metricConfig)
-
-    metrics.sensor("start_ts")
-
-    val metricName: MetricName = metrics.metricName(
-      "json",
-      "serdes-errors",
-      "count of all failures related to json deserialization "
-    )
-
-    this.sensor = streamsMetrics.addSensor("start_ts", Sensor.RecordingLevel.INFO)
-
-    sensor.add(metricName, new CumulativeCount())
+    sensor.add(metricName("count"), new Count())
+    sensor.add(metricName("rate"), new Rate())
+    sensor.add(metricName("sum"), new Sum())
   }
 
   override def transform(value: FoodOrder): Unit = {

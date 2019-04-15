@@ -81,7 +81,7 @@ object ActorGenD {
     override protected val title: String = s"Dinner sub worker - $zone"
 
     override def coldStart: FiniteDuration =
-      if(zone.toString equals ZoneId.SHORT_IDS.get("AET")) 10 seconds else Duration.Zero
+      if(zone equals ZoneId.of("Australia/Sydney")) 10 seconds else Duration.Zero
 
     override def produce: Message[Any, Dinner, NotUsed] = {
       val lunch = generate(zone).pureApply(default, Seed.random())
