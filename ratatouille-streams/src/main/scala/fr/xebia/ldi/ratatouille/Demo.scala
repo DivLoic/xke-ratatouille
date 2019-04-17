@@ -52,22 +52,26 @@ object Demo extends App with DemoImplicits {
 
   val kstreams: KStream[Bytes, FoodOrder] = builder.stream[Bytes, FoodOrder]("input-food-order")
 
-  val Array(breakfasts, lunches, other) = kstreams.branch(
+  val Array(breakfasts, lunches, drinks, errors, other) = kstreams.branch(
     (_, value) => value.isInstanceOf[Breakfast],
     (_, value) => value.isInstanceOf[Lunch],
+    (_, value) => value.isInstanceOf[Drink],
+    (_, value) => value equals FoodOrderErr,
     (_, _) => true
   )
 
   breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(BreakfastLabel))
   lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(LunchLabel))
-  // drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DrinkLabel))
+  drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DrinkLabel))
   // dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DinnerLabel))
 
   breakfasts.mapValues(_.toAvro[Breakfast]).to("decoded-breakfast")
 
   lunches.mapValues(_.toAvro[Lunch]).to("decoded-lunch")
 
-  // produce avro .to("decoded-drink")
+  drinks.mapValues(_.toAvro[Drink]).to("decoded-drink")
+
+  errors.transformValues(() => new FoodOrderErrorSink)
 
   // produce avro .to("decoded-dinner")
 

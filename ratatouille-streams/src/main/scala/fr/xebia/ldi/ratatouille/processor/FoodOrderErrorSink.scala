@@ -39,15 +39,14 @@ class FoodOrderErrorSink extends ValueTransformer[FoodOrder, Unit] {
 
     sensor = this.context.metrics.addSensor("food-errors", Sensor.RecordingLevel.INFO)
 
-    sensor.add(??? /*"count"*/)
-    sensor.add(??? /*"rate"*/)
-    sensor.add(??? /*"sum"*/)
+    sensor.add(metricName("count"), new Count)
+    sensor.add(metricName("rate"), new Rate)
+    sensor.add(metricName("sum"), new Sum)
   }
 
   override def transform(value: FoodOrder): Unit = {
 
-    // todo: record
-    //sensor
+    sensor.record()
 
   }
 
