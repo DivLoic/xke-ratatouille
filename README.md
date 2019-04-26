@@ -44,7 +44,7 @@ $ git clone https://github.com/DivLoic/xke-ratatouille.git
 $ cd xke-ratatouille
 ```
 
-Run the `gradlew-compose` script. This will, compile the project, create docker images and run theme.
+Run the `gradlew-compose` script. This will, compile the project, create docker images and run them.
 
 ```{bash}
 $ ./gradlew-compose.sh
@@ -81,7 +81,7 @@ In a new terminal, start the streaming app.
 ```${bash}
 $ ./gradlew demo
 ```
-![Record generator](docs/application.svg)
+[![asciicast](https://asciinema.org/a/xEhjhc5JomMpnXqLEtV1SslZ1.svg)](https://asciinema.org/a/xEhjhc5JomMpnXqLEtV1SslZ1)
 
 Since it's the correction, this version take care of all the corrupted messages.
 
@@ -96,7 +96,7 @@ Culprit spoted🎉! Some drinks are not serialised as expected. Actually this is
 
 ### Dead Letter Queue
 Scroll down the interface and switch on the Elasticsearch connector. This connector send messages from the 
-`dlq-food-error` topic to a Elasticsearch index. Then you can visualise theme in Kibana. 
+`dlq-food-error` topic to a Elasticsearch index. Then you can visualise them in Kibana. 
 ![Record generator](docs/kibana.png)  
 
 All corrupted messages in dinner flow end with `414554`. 
