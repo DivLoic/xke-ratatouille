@@ -3,12 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="./css/main.css">
-    <link rel="stylesheet" href="./css/toggle.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Xke Ratatouille - Kafka-Streams & the poison pill</title>
+    <link rel="stylesheet" href="./css/toggle.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="shortcut icon" type="image/x-icon"
+          href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/240/apple/198/potato_1f954.png">
+
+    <title>Xke Ratatouille - Kafka Streams & the poison pill</title>
 </head>
 <body>
 <header>
@@ -19,7 +22,7 @@
             <div class="col-1"><span></span></div>
             <div class="col-10">
                 <p id="typed" style="margin: 0; padding: 0; width: 100%"></p>
-                <p class="subtitle">Poison pills, handle the unexpected with Kafka-Streams</p>
+                <p class="subtitle">Poison pills, handle the unexpected with Kafka Streams</p>
             </div>
             <div class="col-1"><span></span></div>
         </div>
@@ -27,20 +30,20 @@
 </header>
 <br/><br/>
 <main class="container-fluid">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Data</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Generator</li>
-            </ol>
-        </nav>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Data</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Generator</li>
+        </ol>
+    </nav>
 
     <br/>
 
     <div class="row" id="control-pad">
         <div class="col col-sm-1"></div>
         <table class="table col col-sm-10">
-            <thead>
+            <thead class="exercises">
             <tr>
                 <th scope="row">#</th>
                 <th scope="col">Exercise</th>
@@ -48,7 +51,7 @@
                 <th scope="col" style="text-align: center;">Status</th>
             </tr>
             </thead>
-            <tbody>
+            <tbody class="exercises">
             <tr>
                 <th scope="row">🥞</th>
                 <td>Exercise 1</td>
@@ -102,6 +105,34 @@
                 </td>
             </tr>
             </tbody>
+            <tbody class="margin">
+            <tr>
+                <th style="height: 60px"></th>
+            </tr>
+            </tbody>
+            <thead class="connectors">
+            <tr>
+                <th scope="row">&nbsp;&nbsp;&nbsp;🔗&nbsp;&nbsp;&nbsp;</th>
+                <th scope="col">Connector</th>
+                <th scope="col">System</th>
+                <th scope="col" style="text-align: center;">Status</th>
+            </tr>
+            </thead>
+            <tbody class="connectors">
+            <tr>
+                <th scope="row"><img src="image/es-icon.png" style="height:24px;vertical-align:top" alt="elastic"></th>
+                <td>drink-sink</td>
+                <td>Elasticsearch</td>
+                <td>
+                    <ul class="tg-list">
+                        <li class="tg-list-item">
+                            <input title="exercise1" class="tgl tgl-ios" id="tg5" type="checkbox"/>
+                            <label class="tgl-btn" for="tg5"></label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
         </table>
     </div>
 </main>
@@ -114,60 +145,84 @@
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.9"></script>
 <script>
-    var EX = {
-        "breakfast": "tg1",
-        "lunch": "tg2",
-        "drink": "tg3",
-        "dinner": "tg4"
+    var EXERCISES = {
+        breakfast: "tg1",
+        lunch: "tg2",
+        drink: "tg3",
+        dinner: "tg4"
+    };
+
+    var CONNECTOR = {
+        name: "exercise-drink-sink",
+        config: {
+            'connector.class': "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+            'tasks.max': "1",
+            'topics': "dlq-food-order",
+            'key.ignore': true,
+            'connection.url': "http://elasticsearch:9200",
+            'type.name': "kafka-connect"
+        }
     };
 
     $.get("http://localhost:7070/api/status", function (data) {
         console.log(data);
         data["exercises"].forEach(function (el) {
-            if (el["active"]) $("#" + EX[el["name"]]).prop("checked", true);
+            if (el["active"]) $("#" + EXERCISES[el["name"]]).prop("checked", true);
         });
     });
 
-    $("#tg1").click(function () {
-        var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:7070/api/" + action + "/breakfast", function (data) {
-            console.log(data);
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        url: "http://localhost:8083/connectors/exercise-drink-sink/status/"
+    }).done(function (data) {
+        console.log(data);
+        if (data["connector"]["state"] === "RUNNING") $("#tg5").prop("checked", true);
+    });
+
+    Object.keys(EXERCISES).forEach(function (key) {
+        $("#" + EXERCISES[key]).click(function () {
+            var action = ($(this).is(":checked")) ? "start" : "stop";
+            $.get("http://localhost:7070/api/" + action + "/" + key, function (data) {
+                console.log(data);
+            });
         });
     });
 
-    $("#tg2").click(function () {
-        var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:7070/api/" + action + "/lunch", function (data) {
-            console.log(data);
-        });
-    });
+    $("#tg5").click(function () {
+        if ($(this).is(":checked")) {
+            $.ajax({
+                type: 'POST',
+                data: JSON.stringify(CONNECTOR),
+                crossDomain: true,
+                headers: {"Content-Type": "application/json"},
+                url: "http://localhost:8083/connectors/"
+            }).done(function (data) {
+                console.log(data);
+            });
 
-    $("#tg3").click(function () {
-        var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:7070/api/" + action + "/drink", function (data) {
-            console.log(data);
-        });
-    });
-
-
-    $("#tg4").click(function () {
-        var action = ($(this).is(":checked")) ? "start" : "stop";
-        $.get("http://localhost:7070/api/" + action + "/dinner", function (data) {
-            console.log(data);
-        });
+        } else {
+            $.ajax({
+                type: 'DELETE',
+                crossDomain: true,
+                headers: {"Content-Type": "application/json"},
+                url: "http://localhost:8083/connectors/exercise-drink-sink"
+            }).done(function (data) {
+                console.log(data);
+            });
+        }
     });
 
     var typed = new Typed("#typed", {
-        // Waits 1000ms after typing "First"
         strings: ["XKE RATATOUILLE"],
         typeSpeed: 80,
         fadeOutDelay: 500,
         showCursor: false,
-        onComplete: function(self) {
+        onComplete: function (self) {
             $("p.subtitle ")
                 .css({top: 50, opacity: 0})
                 .animate({top: 0, opacity: 1}, 800)
-    }
+        }
     });
 </script>
 </body>
