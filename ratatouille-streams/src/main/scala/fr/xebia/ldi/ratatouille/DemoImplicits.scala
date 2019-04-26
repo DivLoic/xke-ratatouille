@@ -20,4 +20,9 @@ trait DemoImplicits {
       props
     }
   }
+
+  val BreakfastLabel = "\uD83E\uDD50breakfast"
+  val LunchLabel = "\uD83C\uDF55lunch"
+  val DrinkLabel = "\uD83C\uDF7Adrink"
+  val DinnerLabel = "\uD83C\uDF5Ddinner"
 }

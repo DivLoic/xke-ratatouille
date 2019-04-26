@@ -18,7 +18,7 @@ WORKDIR /root/www/site/
 ADD 404.html /root/www/site/
 ADD index.html /root/www/site/
 ADD css/ /root/www/site/css/
-ADD fonts/ /root/www/site/font/
+ADD fonts/ /root/www/site/fonts/
 ADD image/ /root/www/site/image/
 
 CMD http-server .

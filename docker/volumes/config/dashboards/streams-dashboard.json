@@ -163,7 +163,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(kafka_streams_custom_metrics_food_errors_count{job=\"ratatouille\"}[5s])) by (app_id)",
+          "expr": "sum(kafka_streams_custom_metrics_food_errors_rate{job=\"ratatouille\"}) by (app_id)",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "{{app_id}}",
@@ -270,62 +270,6 @@
       }
     },
     {
-      "datasource": "Prometheus",
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 0,
-        "y": 9
-      },
-      "id": 8,
-      "links": [],
-      "options": {
-        "maxValue": 100,
-        "minValue": 0,
-        "orientation": "auto",
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "thresholds": [
-          {
-            "color": "green",
-            "index": 0,
-            "value": null
-          },
-          {
-            "color": "#EAB839",
-            "index": 1,
-            "value": 60
-          },
-          {
-            "color": "red",
-            "index": 2,
-            "value": 80
-          }
-        ],
-        "valueMappings": [],
-        "valueOptions": {
-          "decimals": null,
-          "prefix": "",
-          "stat": "mean",
-          "suffix": "",
-          "unit": "none"
-        }
-      },
-      "pluginVersion": "6.1.3",
-      "targets": [
-        {
-          "expr": "kafka_streams_custom_metrics_food_errors_count / kafka_server_brokertopicmetrics_meanrate",
-          "format": "time_series",
-          "intervalFactor": 1,
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Corrupted message ratio",
-      "type": "gauge"
-    },
-    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -334,8 +278,8 @@
       "fill": 1,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 12,
+        "x": 0,
         "y": 9
       },
       "id": 12,
@@ -419,8 +363,8 @@
       "fill": 1,
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 16,
+        "w": 12,
+        "x": 12,
         "y": 9
       },
       "id": 10,

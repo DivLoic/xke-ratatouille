@@ -10,6 +10,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_JAVA_OPTS: -Xmx128m -Xms128m
     networks:
     - ratatouille
 
@@ -30,6 +31,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_JAVA_OPTS: -Xmx128m -Xms128m
       KAFKA_JMX_OPTS: >
         -Djava.rmi.server.hostname=kafka
         -Dcom.sun.management.jmxremote.rmi.port=9093
@@ -54,6 +56,7 @@ services:
     ports:
     - "8081:8081"
     environment:
+      SCHEMA_REGISTRY_JAVA_OPTS: -Xmx128m -Xms128m
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
@@ -84,7 +87,7 @@ services:
     environment:
     - cluster.name=docker-cluster
     - bootstrap.memory_lock=true
-    #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
     ulimits:
       memlock:
         soft: -1
@@ -126,9 +129,12 @@ services:
       CONNECT_CONFIG_STORAGE_TOPIC: docker-connect-configs
       CONNECT_OFFSET_STORAGE_TOPIC: docker-connect-offsets
       CONNECT_STATUS_STORAGE_TOPIC: docker-connect-status
+      CONNECT_ACCESS_CONTROL_ALLOW_ORIGIN: "*"
+      CONNECT_ACCESS_CONTROL_ALLOW_METHODS: GET,POST,PUT,DELETE,OPTIONS
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: "1"
       CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: "1"
+      CONNECT_JAVA_OPTS: -Xmx128m -Xms128m
       CONNECT_PLUGIN_PATH: '/usr/share/java,/etc/kafka-connect/jars'
     depends_on:
     - schema-registry
@@ -169,6 +175,7 @@ services:
       HOST: 'ratatouille-datagen'
       PORT: '7070'
       KAFKA_BROKERS: 'kafka:29092'
+      JAVA_OPTS: -Xmx64m -Xms64m
     ports:
     - "7070:7070"
     depends_on:
