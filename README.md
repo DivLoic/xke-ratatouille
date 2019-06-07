@@ -25,7 +25,7 @@ These types of records are referred to as “*poison pills*”.
 
 ## tl;dr
 This project is a demo from the talk: _Streaming App Poison Pills: handle the unexpected with Kafka Streams_
-([slides](https://speakerdeck.com/loicdivad/poison-pills-handle-the-unexpected-with-kafka-streams) / [video](#)),
+([slides](https://speakerdeck.com/loicdivad/poison-pills-handle-the-unexpected-with-kafka-streams) / [video](https://www.youtube.com/watch?v=DTEext4DUN0)),
 first presented at _[DEVOXX France'2019](https://www.devoxx.fr/)_. 
 
 ## Storytelling
@@ -113,19 +113,5 @@ $ docker-compose down
 ```
 
 ## Complete the exercises
-
-### Exercise One: Breakfast
-
-_TODO_
-
-### Exercise One: Lunch
-
-_TODO_
-
-### Exercise One: Drink
-
-_TODO_
-
-### Exercise One: Dinner
 
 _TODO_
