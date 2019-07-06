@@ -4,8 +4,9 @@ import java.time.{Instant, ZoneId}
 import java.time.format.DateTimeFormatter
 import java.util.{Locale, UUID}
 
-import com.sksamuel.avro4s.{AvroName, AvroNamespace}
+import com.sksamuel.avro4s.{AvroName, AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Dinner.{Client, Command, Moment}
+import org.apache.avro.generic.GenericRecord
 
 /**
   * Created by loicmdivad.
@@ -15,6 +16,8 @@ case class Dinner(dish: Command,
                   @AvroName("client") maybeClient: Option[Client],
                   moment: Moment,
                   zone: String) extends FoodOrder {
+
+  override def toAvro: GenericRecord = RecordFormat[Dinner].to(this)
 
   override def toString: String =
     s"${dish.name}".padTo(100, " ").mkString("") + DateTimeFormatter.ofPattern("EEE d MMM yyyy h:mm a", Locale.FRANCE)

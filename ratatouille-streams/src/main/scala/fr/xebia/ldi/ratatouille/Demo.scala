@@ -7,7 +7,7 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.{LogAndContinueExceptionHandler, LogAndFailExceptionHandler}
 import org.apache.kafka.streams.kstream.Printed
-import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}
+import org.apache.kafka.streams.scala.kstream.{Consumed, KStream, Produced}
 import org.apache.kafka.streams.scala.{Serdes, StreamsBuilder}
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
 import FoodOrder.{BreakfastFormat, DinnerFormat, DrinkFormat, LunchFormat}
@@ -15,8 +15,10 @@ import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler
 import fr.xebia.ldi.ratatouille.processor.FoodOrderErrorSink
 import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde
 import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde.FoodOrderErr
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.BytesSerializer
+import org.apache.kafka.common.serialization.{ByteArraySerializer, BytesSerializer}
+import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
 
@@ -26,24 +28,29 @@ import scala.collection.JavaConverters._
   */
 object Demo extends App with DemoImplicits {
 
+  val logger = LoggerFactory.getLogger(getClass)
+
   val config = Map(
     StreamsConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092",
     StreamsConfig.APPLICATION_ID_CONFIG -> "devoxx-2019-appid",
-    s"dlq.topic.name" -> "dlq-food-order",
     s"dlq.schema.registry.url" -> "http://localhost:8081",
+    s"dlq.topic.name" -> "dlq-food-order",
     s"dlq.${StreamsConfig.BOOTSTRAP_SERVERS_CONFIG}" -> "localhost:9092",
-    s"dlq.${ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG}" -> classOf[BytesSerializer],
-    s"dlq.${ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG}" -> classOf[GenericAvroSerializer],
+    s"dlq.${ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG}" -> classOf[ByteArraySerializer],
+    s"dlq.${ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG}" -> classOf[ByteArraySerializer],
     StreamsConfig.DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG -> classOf[DeadLetterQueueFoodExceptionHandler]
-  )
+
+  ) ++ monitoringConfigs
 
   val avroSede = new GenericAvroSerde()
+
   avroSede.configure(Map("schema.registry.url" -> "http://localhost:8081").asJava, false)
 
   implicit val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, SentinelValueSerde.serde)
+
   implicit val produced: Produced[Bytes, GenericRecord] = Produced.`with`(Serdes.Bytes, avroSede)
 
-  val builder: StreamsBuilder = new StreamsBuilder()
+  val builder: StreamsBuilder = new StreamsBuilder
 
   val Array(breakfasts, lunches, drinks, dinners, errors, others) = builder
 
@@ -58,33 +65,31 @@ object Demo extends App with DemoImplicits {
       (_, _) => true
     )
 
+  breakfasts  print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🥐Label`)
+  lunches     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍕Label`)
+  drinks      print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍺Label`)
+  dinners     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍝Label`)
 
-  breakfasts.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(BreakfastLabel))
-  lunches.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(LunchLabel))
-  drinks.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DrinkLabel))
-  dinners.print(Printed.toSysOut[Bytes, FoodOrder].withLabel(DinnerLabel))
+  breakfasts. /* processing */ mapValues(_.toAvro).to("decoded-breakfast")
 
+  lunches. /* processing */ mapValues(_.toAvro).to("decoded-lunch")
 
-  breakfasts.mapValues(food => food.toAvro[Breakfast]).to("decoded-breakfast")
-
-  lunches.mapValues(food => food.toAvro[Lunch]).to("decoded-lunch")
-
-  drinks.mapValues(food => food.toAvro[Drink]).to("decoded-drink")
+  drinks. /* processing */ mapValues(_.toAvro).to("decoded-drink")
 
   errors.transformValues(() => new FoodOrderErrorSink())
 
-  dinners.mapValues(food => food.toAvro[Dinner]).to("decoded-dinner")
+  dinners. /* processing */ mapValues(_.toAvro).to("decoded-dinner")
 
   others.to("decoded-other")(Produced.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde))
 
-  val streams: KafkaStreams = new KafkaStreams(builder.build(), config.toProperties)
+  val streams: KafkaStreams = new KafkaStreams(builder.build(), config)
 
   streams.cleanUp()
 
   streams.start()
 
   sys.ShutdownHookThread {
+    logger error "The app just entered the shutdown hook, now closing kafka streams"
     streams.close()
-    streams.cleanUp()
   }
 }

@@ -3,7 +3,7 @@ package fr.xebia.ldi.ratatouille.common
 import cats.Applicative
 import com.sksamuel.avro4s.{Record, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast.{Meat, Pastry}
-import org.apache.avro.generic.GenericRecord
+import org.apache.avro.generic.{GenericRecord, IndexedRecord}
 import scodec.bits.BitVector
 import scodec.codecs.{byte, cstring}
 import scodec.{Attempt, Codec, DecodeResult, SizeBound}

@@ -1,17 +1,20 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import com.sksamuel.avro4s.AvroNamespace
+import com.sksamuel.avro4s.{AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.codec
 import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
 import scodec.codecs.{Discriminated, Discriminator}
 import io.circe.generic.auto._
 import io.circe.syntax._
+import org.apache.avro.generic.GenericRecord
 
 /**
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
 case class Drink(name: String, `type`: DrinkType, quantity: Int, alcohol: Option[Double]) extends FoodOrder {
+
+  override def toAvro: GenericRecord = RecordFormat[Drink].to(this)
 
   override def toString: String = s"$name, ${quantity}cl.".padTo(60, " ").mkString("") +
     s"\t\t (${`type`.getClass.getSimpleName})"
@@ -37,11 +40,11 @@ object Drink {
   implicit val discriminated: Discriminated[DrinkType, Symbol] = Discriminated(codec.symbolCodec)
 
   object DrinkType {
-    implicit val discriminator1: Discriminator[DrinkType, Wine, Symbol] = Discriminator('Wine)
-    implicit val discriminator2: Discriminator[DrinkType, Rhum, Symbol] = Discriminator('Rhum)
-    implicit val discriminator3: Discriminator[DrinkType, Water, Symbol] = Discriminator('Water)
-    implicit val discriminator4: Discriminator[DrinkType, Whisky, Symbol] = Discriminator('Whisky)
-    implicit val discriminator5: Discriminator[DrinkType, Champagne, Symbol] = Discriminator('Champagne)
+    implicit val discriminator1: Discriminator[DrinkType, Wine, Symbol] = Discriminator(Symbol("Wine"))
+    implicit val discriminator2: Discriminator[DrinkType, Rhum, Symbol] = Discriminator(Symbol("Rhum"))
+    implicit val discriminator3: Discriminator[DrinkType, Water, Symbol] = Discriminator(Symbol("Water"))
+    implicit val discriminator4: Discriminator[DrinkType, Whisky, Symbol] = Discriminator(Symbol("Whisky"))
+    implicit val discriminator5: Discriminator[DrinkType, Champagne, Symbol] = Discriminator(Symbol("Champagne"))
   }
 
   val wine0 = Drink("Château Mouton Rothschild Pauillac", Wine, 15, Some(12.5))

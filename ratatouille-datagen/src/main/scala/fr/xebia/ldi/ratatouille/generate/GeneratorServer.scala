@@ -16,6 +16,7 @@ import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.utils.Bytes
 import org.slf4j.LoggerFactory
 import pureconfig.loadConfig
+import pureconfig.generic.auto._
 
 import scala.concurrent.ExecutionContextExecutor
 

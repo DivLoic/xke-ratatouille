@@ -1,8 +1,9 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import com.sksamuel.avro4s.AvroNamespace
+import com.sksamuel.avro4s.{AvroNamespace, Record, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast.Lang.{EN, FR}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast._
+import org.apache.avro.generic.GenericRecord
 import scodec.codecs.{Discriminated, Discriminator, uint8}
 import scodec.{Codec, codecs}
 
@@ -14,6 +15,8 @@ case class Breakfast(lang: Lang,
                      liquid: Liquid,
                      fruit: Fruit,
                      dishes: Either[Meat, Vector[Pastry]] = Right(Vector.empty)) extends FoodOrder {
+
+  override def toAvro: GenericRecord = RecordFormat[Breakfast].to(this)
 
   override def toString =
       s"(${lang match {case FR() => "Fr"; case EN() => "En"}}) " +

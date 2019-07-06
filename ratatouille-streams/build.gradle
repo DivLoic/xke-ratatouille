@@ -1,6 +1,7 @@
 plugins { }
 
-dependencies {
+apply plugin: 'application'
 
+dependencies {
     compile project(':ratatouille-common')
 }

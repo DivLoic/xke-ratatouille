@@ -1,7 +1,8 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import com.sksamuel.avro4s.AvroNamespace
+import com.sksamuel.avro4s.{AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Lunch._
+import org.apache.avro.generic.GenericRecord
 import scodec.codecs.{Discriminated, Discriminator, cstring}
 
 /**
@@ -9,6 +10,8 @@ import scodec.codecs.{Discriminated, Discriminator, cstring}
   */
 @AvroNamespace("ratatouille")
 case class Lunch(name: String, price: Double, `type`: LunchType) extends FoodOrder {
+
+  override def toAvro: GenericRecord = RecordFormat[Lunch].to(this)
 
   override def toString: String =
     s"$name (${`type`.getClass.getSimpleName.toLowerCase}),".padTo(90, " ").mkString("") + s"price: ${price}€"
