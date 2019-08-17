@@ -2,22 +2,20 @@ package fr.xebia.ldi.ratatouille
 
 import fr.xebia.ldi.ratatouille.common.model._
 import fr.xebia.ldi.ratatouille.common.serde.FoodOrderSerde
-import io.confluent.kafka.streams.serdes.avro.{GenericAvroSerde, GenericAvroSerializer}
+import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.common.utils.Bytes
 import org.apache.kafka.streams.errors.{LogAndContinueExceptionHandler, LogAndFailExceptionHandler}
 import org.apache.kafka.streams.kstream.Printed
-import org.apache.kafka.streams.scala.kstream.{Consumed, KStream, Produced}
+import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}
 import org.apache.kafka.streams.scala.{Serdes, StreamsBuilder}
 import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
-import FoodOrder.{BreakfastFormat, DinnerFormat, DrinkFormat, LunchFormat}
 import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler
-import fr.xebia.ldi.ratatouille.processor.FoodOrderErrorSink
+import fr.xebia.ldi.ratatouille.processor.FoodOrderSentinelValueProcessor
 import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde
-import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde.FoodOrderErr
-import org.apache.kafka.clients.consumer.ConsumerConfig
+import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde.FoodOrderError
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.{ByteArraySerializer, BytesSerializer}
+import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConverters._
@@ -61,7 +59,7 @@ object Demo extends App with DemoImplicits {
       (_, value) => value.isInstanceOf[Lunch],
       (_, value) => value.isInstanceOf[Drink],
       (_, value) => value.isInstanceOf[Dinner],
-      (_, value) => value equals FoodOrderErr,
+      (_, value) => value equals FoodOrderError,
       (_, _) => true
     )
 
@@ -76,7 +74,7 @@ object Demo extends App with DemoImplicits {
 
   drinks. /* processing */ mapValues(_.toAvro).to("decoded-drink")
 
-  errors.transformValues(() => new FoodOrderErrorSink())
+  errors.transformValues(() => new FoodOrderSentinelValueProcessor())
 
   dinners. /* processing */ mapValues(_.toAvro).to("decoded-dinner")
 

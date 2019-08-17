@@ -18,7 +18,7 @@ object FoodOrderDraft extends App {
 
   // Breakfast__________________________________________________________________________________________________________
   println("Breakfast")
-  println(Codec.encode[FoodOrder](Breakfast(EN(), Beer(), Pineapple(), Left(Meat(2, 3, 1)))).require)
+  println(Codec.encode[FoodOrder](Breakfast(EN, Beer, Pineapple, Left(Meat(2, 3, 1)))).require)
   printf(Codec.decode[FoodOrder](hex"0044d1fe10020301".bits).require.toString)
 
   (0 until 3) foreach (_ => println())

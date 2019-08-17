@@ -82,8 +82,8 @@ object ActorGenC {
     override protected val title: String = s"Drink sub worker n°${`type`}"
 
     override def coldStart: FiniteDuration = `type` match {
-      case Wine() => 10 seconds
-      case _ => Duration.Zero
+      case Wine => Duration.Zero
+      case _ => 8 seconds
     }
 
     override def produce: Message[Any, Drink, NotUsed] = {

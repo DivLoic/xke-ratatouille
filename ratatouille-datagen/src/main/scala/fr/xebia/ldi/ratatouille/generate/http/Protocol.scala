@@ -10,15 +10,11 @@ import scala.concurrent.ExecutionContext
 /**
   * Created by loicmdivad.
   */
-trait Protocol extends DefaultJsonProtocol with SprayJsonSupport with Conf {
+trait Protocol extends DefaultJsonProtocol with SprayJsonSupport {
   protected implicit def executionContext: ExecutionContext
   protected implicit def materializer: ActorMaterializer
-  //protected def logger: LoggingAdapter
-
 
   implicit val exerciseFormat: RootJsonFormat[Exercise] = jsonFormat2(Exercise)
   implicit val statusFormat: RootJsonFormat[Status] = jsonFormat3(Status)
   implicit val cmdFormat: RootJsonFormat[Command] = jsonFormat2(Command)
-
-
 }
