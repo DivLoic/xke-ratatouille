@@ -35,7 +35,7 @@ subprojects {
         compile group: 'io.circe', name: 'circe-parser_2.12', version: '0.11.1'
         compile group: 'io.circe', name: 'circe-generic_2.12', version: '0.11.1'
 
-        compile group: 'com.sksamuel.avro4s', name: 'avro4s-core_2.12', version: '2.0.4'
+        compile group: 'com.sksamuel.avro4s', name: 'avro4s-core_2.12', version: '3.0.0'
 
         compile group: 'com.github.pureconfig', name: 'pureconfig_2.12', version: '0.11.1'
 
@@ -54,8 +54,12 @@ subprojects {
     compileScala {
         scalaCompileOptions.additionalParameters = [
                 '-encoding', 'utf8',
+                '-feature',
+                '-unchecked',
+                '-deprecation',
                 '-Xfatal-warnings',
                 '-language:postfixOps',
+                '-language:higherKinds',
                 '-Ypartial-unification',
                 '-Xmacro-settings:materialize-derivations'
         ]

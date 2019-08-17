@@ -14,29 +14,24 @@ case class Lunch(name: String, price: Double, `type`: LunchType) extends FoodOrd
   override def toAvro: GenericRecord = RecordFormat[Lunch].to(this)
 
   override def toString: String =
-    s"$name (${`type`.getClass.getSimpleName.toLowerCase}),".padTo(90, " ").mkString("") + s"price: ${price}€"
+    s"$name (${`type`.toString.toLowerCase}),".padTo(90, " ").mkString("") + s"price: ${price}€"
 }
 
 object Lunch {
 
   sealed abstract class LunchType
-  case class MainDish() extends LunchType
-  case class Starter() extends LunchType
-  case class Dessert() extends LunchType
-  case class Error() extends LunchType
-
-  object MainDish extends MainDish
-  object Starter extends Starter
-  object Dessert extends Dessert
-  object Error extends Error
+  case object MainDish extends LunchType
+  case object Starter extends LunchType
+  case object Dessert extends LunchType
+  case object LunchError extends LunchType
 
   implicit val discriminated: Discriminated[LunchType, String] = Discriminated(cstring)
 
   object LunchType {
-      implicit val discriminator1: Discriminator[LunchType, MainDish, String] = Discriminator("main")
-      implicit val discriminator2: Discriminator[LunchType, Starter, String] = Discriminator("starter")
-      implicit val discriminator3: Discriminator[LunchType, Dessert, String] = Discriminator("dessert")
-      implicit val discriminator4: Discriminator[LunchType, Error, String] = Discriminator("error")
+      implicit val discriminator1: Discriminator[LunchType, MainDish.type, String] = Discriminator("main")
+      implicit val discriminator2: Discriminator[LunchType, Starter.type, String] = Discriminator("starter")
+      implicit val discriminator3: Discriminator[LunchType, Dessert.type, String] = Discriminator("dessert")
+      implicit val discriminator4: Discriminator[LunchType, LunchError.type, String] = Discriminator("error")
   }
 
   val menu: Vector[Lunch] = Vector(
@@ -60,5 +55,5 @@ object Lunch {
   )
 
   final class LunchError(line: String) extends
-    Lunch(name = s"Error in line: $line", price = Double.MinValue, `type`= Error)
+    Lunch(name = s"Error in line: $line", price = Double.MinValue, `type`= LunchError)
 }

@@ -9,8 +9,8 @@ import scodec.codecs.{byte, cstring}
 import scodec.{Attempt, Codec, DecodeResult, SizeBound}
 
 /**
-  * Created by loicmdivad.
-  */
+ * Created by loicmdivad.
+ */
 package object codec {
 
   implicit lazy val symbolCodec: Codec[Symbol] = new Codec[Symbol] {
@@ -24,9 +24,10 @@ package object codec {
     override def sizeBound: SizeBound = byte.sizeBound
   }
 
-  implicit private lazy val applicativeAttempt: Applicative[Attempt] = new Applicative[Attempt]{
+  implicit private lazy val applicativeAttempt: Applicative[Attempt] = new Applicative[Attempt] {
     override def pure[A](x: A): Attempt[A] = Attempt.successful(x)
-    override def ap[A, B](ff: Attempt[A => B])(fa: Attempt[A]): Attempt[B] = for { a <- fa; f <- ff } yield f(a)
+
+    override def ap[A, B](ff: Attempt[A => B])(fa: Attempt[A]): Attempt[B] = for {a <- fa; f <- ff} yield f(a)
   }
 
   implicit lazy val breakfastDishCodec: Codec[Either[Meat, Vector[Pastry]]] =
@@ -46,14 +47,14 @@ package object codec {
 
         .recoverWith[DecodeResult[Either[Meat, Vector[Pastry]]]] {
 
-        case _ => for {
+          case _ => for {
 
-          result <- Meat.codec.decode(bits)
+            result <- Meat.codec.decode(bits)
 
-          meat <- result.map(Left[Meat, Vector[Pastry]]).pure[Attempt]
+            meat <- result.map(Left[Meat, Vector[Pastry]]).pure[Attempt]
 
-        } yield meat
-      }
+          } yield meat
+        }
 
       override def encode(value: Either[Meat, Vector[Pastry]]): Attempt[BitVector] = value match {
         case Left(meat) => Meat.codec.encode(meat)
@@ -63,12 +64,10 @@ package object codec {
       override def sizeBound = byte.sizeBound
     }
 
+  implicit lazy val symbolFormat: RecordFormat[Symbol] = new RecordFormat[Symbol] {
 
-  implicit lazy val symbolFormat: RecordFormat[Symbol] =  new RecordFormat[Symbol] {
-
-    override def from(record: GenericRecord): Symbol = Symbol(RecordFormat[String].from(record))
+    override def from(record: IndexedRecord): Symbol = Symbol(RecordFormat[String].from(record))
 
     override def to(t: Symbol): Record = RecordFormat[String].to(t.name)
   }
-
 }

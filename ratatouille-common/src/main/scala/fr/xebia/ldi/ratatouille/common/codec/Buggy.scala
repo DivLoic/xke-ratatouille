@@ -17,7 +17,7 @@ import scodec.codecs.implicits._
   */
 private[common] object Buggy {
 
-  final case class BuggyBreakfast(lang: Lang, liquid: Liquid, fruit: Fruit, dishes: Vector[Pastry] = Vector())
+  final case class BuggyBreakfast(lang: Lang, liquid: Liquid, fruit: Fruit, dishes: Vector[Pastry])
 
   trait BuggyCodec[T <: FoodOrder] extends Codec[T] {
 
@@ -37,7 +37,7 @@ private[common] object Buggy {
   lazy val lunchEvidence: BuggyCodec[Lunch] = (bits: BitVector) => decode[Lunch](bits)
     .flatMap { cmd =>
       cmd.value.`type` match {
-        case MainDish() | Starter() => Attempt.successful(cmd)
+        case MainDish | Starter => Attempt.successful(cmd)
         case _ => Attempt.failure(Err(s"Unknown currency: Dessertù&ù#@!*£%ù¨"))
       }
     }
@@ -45,8 +45,8 @@ private[common] object Buggy {
   lazy val drinkEvidence: BuggyCodec[Drink] = (bits: BitVector) => decode[Drink](bits)
     .flatMap { cmd =>
       cmd.value.`type` match {
-        case Wine() => decode[Drink](BitVector(bits.toByteArray.head +: bits.toByteArray.tail.reverse.toVector))
-        case _ => Attempt.successful(cmd)
+        case Wine => Attempt.successful(cmd)
+        case _ => decode[Drink](BitVector(bits.toByteArray.head +: bits.toByteArray.tail.reverse.toVector))
       }
     }
 

@@ -3,10 +3,8 @@ package fr.xebia.ldi.ratatouille.common.model
 import com.sksamuel.avro4s.{AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.codec
 import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
-import scodec.codecs.{Discriminated, Discriminator}
-import io.circe.generic.auto._
-import io.circe.syntax._
 import org.apache.avro.generic.GenericRecord
+import scodec.codecs.{Discriminated, Discriminator}
 
 /**
   * Created by loicmdivad.
@@ -16,8 +14,7 @@ case class Drink(name: String, `type`: DrinkType, quantity: Int, alcohol: Option
 
   override def toAvro: GenericRecord = RecordFormat[Drink].to(this)
 
-  override def toString: String = s"$name, ${quantity}cl.".padTo(60, " ").mkString("") +
-    s"\t\t (${`type`.getClass.getSimpleName})"
+  override def toString: String = s"$name, ${quantity}cl.".padTo(60, " ").mkString("") + s"\t\t (${`type`})"
 
 }
 
@@ -25,26 +22,20 @@ object Drink {
 
   sealed trait DrinkType
 
-  case class Wine() extends DrinkType
-  case class Rhum() extends DrinkType
-  case class Water() extends DrinkType
-  case class Whisky() extends DrinkType
-  case class Champagne() extends DrinkType
-
-  object Wine extends Wine
-  object Rhum extends Rhum
-  object Water extends Water
-  object Whisky extends Whisky
-  object Champagne extends Champagne
+  case object Wine extends DrinkType
+  case object Rhum extends DrinkType
+  case object Water extends DrinkType
+  case object Whisky extends DrinkType
+  case object Champagne extends DrinkType
 
   implicit val discriminated: Discriminated[DrinkType, Symbol] = Discriminated(codec.symbolCodec)
 
   object DrinkType {
-    implicit val discriminator1: Discriminator[DrinkType, Wine, Symbol] = Discriminator(Symbol("Wine"))
-    implicit val discriminator2: Discriminator[DrinkType, Rhum, Symbol] = Discriminator(Symbol("Rhum"))
-    implicit val discriminator3: Discriminator[DrinkType, Water, Symbol] = Discriminator(Symbol("Water"))
-    implicit val discriminator4: Discriminator[DrinkType, Whisky, Symbol] = Discriminator(Symbol("Whisky"))
-    implicit val discriminator5: Discriminator[DrinkType, Champagne, Symbol] = Discriminator(Symbol("Champagne"))
+    implicit val discriminator1: Discriminator[DrinkType, Wine.type, Symbol] = Discriminator(Symbol("Wine"))
+    implicit val discriminator2: Discriminator[DrinkType, Rhum.type, Symbol] = Discriminator(Symbol("Rhum"))
+    implicit val discriminator3: Discriminator[DrinkType, Water.type, Symbol] = Discriminator(Symbol("Water"))
+    implicit val discriminator4: Discriminator[DrinkType, Whisky.type, Symbol] = Discriminator(Symbol("Whisky"))
+    implicit val discriminator5: Discriminator[DrinkType, Champagne.type, Symbol] = Discriminator(Symbol("Champagne"))
   }
 
   val wine0 = Drink("Pauillac, Château Mouton Rothschild", Wine, 15, Some(12.5))

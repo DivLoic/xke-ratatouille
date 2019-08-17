@@ -30,7 +30,7 @@ object Demo extends App with DemoImplicits {
 
   val config = Map(
     StreamsConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092",
-    StreamsConfig.APPLICATION_ID_CONFIG -> "devoxx-2019-appid",
+    StreamsConfig.APPLICATION_ID_CONFIG -> "devoxx-france2019",
     s"dlq.schema.registry.url" -> "http://localhost:8081",
     s"dlq.topic.name" -> "dlq-food-order",
     s"dlq.${StreamsConfig.BOOTSTRAP_SERVERS_CONFIG}" -> "localhost:9092",
