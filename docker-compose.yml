@@ -187,24 +187,16 @@ services:
     image: ratatouille-datagen
     container_name: ratatouille-datagen
     environment:
-      PORT: '7070'
+      APIPORT: '7070'
+      WEBPORT: '8080'
       HOST: 'ratatouille-datagen'
       KAFKA_BROKERS: 'kafka:29092'
       JAVA_OPTS: -Xmx64m -Xms64m
     ports:
     - "7070:7070"
-    depends_on:
-    - control-center
-    networks:
-    - ratatouille
-
-  ratatouille-app:
-    image: ratatouille-app
-    container_name: ratatouille-app
-    ports:
     - "8080:8080"
     depends_on:
-    - ratatouille-datagen
+    - control-center
     networks:
     - ratatouille
 

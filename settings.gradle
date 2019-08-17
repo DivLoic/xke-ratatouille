@@ -1,6 +1,5 @@
 
 rootProject.name = 'xke-ratatouille'
-include 'ratatouille-app'
 include 'ratatouille-common'
 include 'ratatouille-datagen'
 include 'ratatouille-streams'
