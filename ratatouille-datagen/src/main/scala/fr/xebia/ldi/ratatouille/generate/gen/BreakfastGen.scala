@@ -31,7 +31,7 @@ trait BreakfastGen {
 
     fruit <- Gen.frequency((5, Banana), (3, Pineapple))
 
-    List(sausages, beacons, eggs) <- Gen.listOfN(3, Gen.chooseNum(0, 4))
+    List(sausages, bacons, eggs) <- Gen.listOfN(3, Gen.chooseNum(0, 4))
 
-  } yield Breakfast(EN, drink, fruit, Left(Meat(sausages, beacons, eggs)))
+  } yield Breakfast(EN, drink, fruit, Left(Meat(sausages, bacons, eggs)))
 }

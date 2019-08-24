@@ -9,11 +9,12 @@ import org.apache.kafka.streams.errors.{LogAndContinueExceptionHandler, LogAndFa
 import org.apache.kafka.streams.kstream.Printed
 import org.apache.kafka.streams.scala.kstream.{Consumed, Produced}
 import org.apache.kafka.streams.scala.{Serdes, StreamsBuilder}
-import org.apache.kafka.streams.{KafkaStreams, StreamsConfig}
+import org.apache.kafka.streams.{KafkaStreams, StreamsConfig, Topology}
 import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler
 import fr.xebia.ldi.ratatouille.processor.FoodOrderSentinelValueProcessor
 import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde
 import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde.FoodOrderError
+import io.confluent.kafka.serializers.AbstractKafkaAvroSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG
 import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.common.serialization.ByteArraySerializer
 import org.slf4j.LoggerFactory
@@ -42,7 +43,7 @@ object Demo extends App with DemoImplicits {
 
   val avroSede = new GenericAvroSerde()
 
-  avroSede.configure(Map("schema.registry.url" -> "http://localhost:8081").asJava, false)
+  avroSede.configure(Map(SCHEMA_REGISTRY_URL_CONFIG -> "http://localhost:8081").asJava, false)
 
   implicit val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, SentinelValueSerde.serde)
 
@@ -63,10 +64,12 @@ object Demo extends App with DemoImplicits {
       (_, _) => true
     )
 
-  breakfasts  print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🥐Label`)
-  lunches     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍕Label`)
-  drinks      print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍺Label`)
-  dinners     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍝Label`)
+  val _ = {
+    breakfasts  print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🥐Label`)
+    lunches     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍕Label`)
+    drinks      print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍺Label`)
+    dinners     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍝Label`)
+  }
 
   breakfasts. /* processing */ mapValues(_.toAvro).to("decoded-breakfast")
 
@@ -80,7 +83,10 @@ object Demo extends App with DemoImplicits {
 
   others.to("decoded-other")(Produced.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde))
 
-  val streams: KafkaStreams = new KafkaStreams(builder.build(), config)
+  val topology: Topology = builder.build()
+  val streams: KafkaStreams = new KafkaStreams(topology, config)
+
+  logger debug topology.describe().toString
 
   streams.cleanUp()
 

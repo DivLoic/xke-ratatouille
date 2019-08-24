@@ -1,6 +1,6 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import com.sksamuel.avro4s.{AvroNamespace, RecordFormat}
+import com.sksamuel.avro4s.{AvroDoc, AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.codec
 import fr.xebia.ldi.ratatouille.common.model.Drink.DrinkType
 import org.apache.avro.generic.GenericRecord
@@ -10,7 +10,11 @@ import scodec.codecs.{Discriminated, Discriminator}
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
-case class Drink(name: String, `type`: DrinkType, quantity: Int, alcohol: Option[Double]) extends FoodOrder {
+@AvroDoc("Food order corresponding to a drink")
+case class Drink(@AvroDoc("Name") name: String,
+                 @AvroDoc("Type of alcohol") `type`: DrinkType,
+                 @AvroDoc("Quantity in centilitre (metric system rules)") quantity: Int,
+                 @AvroDoc("Alcohol content measured in degrees Gay-Lussac") alcohol: Option[Double]) extends FoodOrder {
 
   override def toAvro: GenericRecord = RecordFormat[Drink].to(this)
 
@@ -20,6 +24,7 @@ case class Drink(name: String, `type`: DrinkType, quantity: Int, alcohol: Option
 
 object Drink {
 
+  @AvroNamespace("ratatouille")
   sealed trait DrinkType
 
   case object Wine extends DrinkType

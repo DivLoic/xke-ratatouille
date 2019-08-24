@@ -1,6 +1,6 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import com.sksamuel.avro4s.{AvroNamespace, Record, RecordFormat}
+import com.sksamuel.avro4s.{AvroDoc, AvroNamespace, RecordFormat}
 import fr.xebia.ldi.ratatouille.common.model.Breakfast._
 import org.apache.avro.generic.GenericRecord
 import scodec.codecs.{Discriminated, Discriminator, uint8}
@@ -10,9 +10,11 @@ import scodec.{Codec, codecs}
   * Created by loicmdivad.
   */
 @AvroNamespace("ratatouille")
-case class Breakfast(lang: Lang,
-                     liquid: Liquid,
-                     fruit: Fruit,
+@AvroDoc("Food order corresponding to a breakfast")
+case class Breakfast(@AvroDoc("Language of the food order, depends on the origin of the event") lang: Lang,
+                     @AvroDoc("Standard name of the drink, without quantity") liquid: Liquid,
+                     @AvroDoc("Standard name of the fruit, without number") fruit: Fruit,
+                     @AvroDoc("Tail of the frame, either a collection of pasties or a number of bacon slices")
                      dishes: Either[Meat, Vector[Pastry]]) extends FoodOrder {
 
   override def toAvro: GenericRecord = RecordFormat[Breakfast].to(this)
@@ -29,6 +31,7 @@ case class Breakfast(lang: Lang,
 
 object Breakfast {
 
+  @AvroNamespace("ratatouille")
   sealed trait Lang
 
   object Lang {
@@ -40,6 +43,7 @@ object Breakfast {
     implicit val discEn: Discriminator[Lang, EN.type , Byte] = Discriminator(0x44)
   }
 
+  @AvroNamespace("ratatouille")
   sealed trait Liquid
 
   object Liquid {
@@ -61,6 +65,7 @@ object Breakfast {
     implicit val discAppleJuice: Discriminator[Liquid, AppleJuice.type, Byte] = Discriminator(0xD5.toByte)
   }
 
+  @AvroNamespace("ratatouille")
   sealed trait Fruit
 
   object Fruit {
@@ -81,8 +86,9 @@ object Breakfast {
 
   }
 
-  case class Meat(sausages: Int, beacons: Int, eggs: Int) {
-    override def toString: String = s"Meat(sausages = $sausages, beacons = $beacons, eggs = $eggs)"
+  @AvroNamespace("ratatouille")
+  case class Meat(sausages: Int, bacons: Int, eggs: Int) {
+    override def toString: String = s"Meat(sausages = $sausages, bacons = $bacons, eggs = $eggs)"
   }
 
   object Meat {
@@ -90,6 +96,7 @@ object Breakfast {
     implicit lazy val codec: Codec[Meat] = (codecs.constant(16) :: uint8 :: uint8 :: uint8).as[Meat]
   }
 
+  @AvroNamespace("ratatouille")
   sealed trait Pastry
 
   object Pastry {
