@@ -1,6 +1,7 @@
 package fr.xebia.ldi.ratatouille.handler
 
 import java.nio.charset.StandardCharsets.UTF_8
+import java.time.ZonedDateTime
 import java.util
 
 import fr.xebia.ldi.ratatouille.DemoImplicits
@@ -43,9 +44,10 @@ class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHand
                       exception: Exception): DeserializationHandlerResponse = {
 
     val headers = record.headers().toArray ++ Array[Header](
-      new RecordHeader("message", exception.getMessage.getBytes(UTF_8)),
-      new RecordHeader("hexavalue", record.value.toHex.getBytes(UTF_8)),
-      new RecordHeader("stacktrace", exception.getStackTrace.flatMap(_.toString.getBytes(UTF_8)))
+      new RecordHeader("processing-time", ZonedDateTime.now().toString.getBytes(UTF_8)),
+      new RecordHeader("error-message", exception.getMessage.getBytes(UTF_8)),
+      new RecordHeader("drink-datetime", record.value.takeRight(10).toHex.getBytes(UTF_8)),
+      new RecordHeader("drink-detail", record.value.slice(5, 9).toHex.getBytes(UTF_8)),
     ) toIterable
 
     val producerRecord = new ProducerRecord(topic, null, record.timestamp, record.key, record.value, headers.asJava)

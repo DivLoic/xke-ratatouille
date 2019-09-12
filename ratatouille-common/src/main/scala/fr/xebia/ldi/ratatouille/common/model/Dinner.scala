@@ -1,6 +1,6 @@
 package fr.xebia.ldi.ratatouille.common.model
 
-import java.time.{Instant, ZoneId}
+import java.time.{Instant, LocalDateTime, ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 import java.util.{Locale, UUID}
 
@@ -21,9 +21,16 @@ case class Dinner(@AvroDoc("Full name of the dish") dish: Command,
 
   override def toAvro: GenericRecord = RecordFormat[Dinner].to(this)
 
-  override def toString: String =
-    s"${dish.name}".padTo(100, " ").mkString("") + DateTimeFormatter.ofPattern("EEE d MMM yyyy h:mm a", Locale.FRANCE)
-      .withZone(ZoneId.of(moment.region)).format(Instant.ofEpochMilli(moment.ts)) + s" - ${moment.region}"
+  override def toString: String = {
+
+    val datetime = Instant
+      .ofEpochSecond(moment.ts)
+      .atZone(ZoneId.of(moment.region))
+      .format(DateTimeFormatter.ofPattern("EEE d MMM yyyy h:mm a", Locale.FRANCE))
+
+
+    s"${dish.name}".padTo(100, " ").mkString("") + datetime + s" - ${moment.region}"
+  }
 
 }
 

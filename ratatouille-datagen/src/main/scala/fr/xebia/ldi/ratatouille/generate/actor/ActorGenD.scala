@@ -45,7 +45,7 @@ object ActorGenD {
 
     private val workers = Vector[ActorRef](
       actorSystem.actorOf(Props.apply(classOf[ActorGenCSubWorker], ZoneId.of("Europe/Paris"), self)),
-      actorSystem.actorOf(Props.apply(classOf[ActorGenCSubWorker], ZoneId.of("Africa/Cairo"), self)),
+      actorSystem.actorOf(Props.apply(classOf[ActorGenCSubWorker], ZoneId.of("Africa/Nairobi"), self)),
       actorSystem.actorOf(Props.apply(classOf[ActorGenCSubWorker], ZoneId.of("Australia/Sydney"), self))
     )
 

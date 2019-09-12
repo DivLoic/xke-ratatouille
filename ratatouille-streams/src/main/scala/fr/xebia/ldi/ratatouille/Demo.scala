@@ -32,7 +32,6 @@ object Demo extends App with DemoImplicits {
   val config = Map(
     StreamsConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092",
     StreamsConfig.APPLICATION_ID_CONFIG -> "kafka-summit-2019",
-    s"dlq.schema.registry.url" -> "http://localhost:8081",
     s"dlq.topic.name" -> "dlq-food-order",
     s"dlq.${StreamsConfig.BOOTSTRAP_SERVERS_CONFIG}" -> "localhost:9092",
     s"dlq.${ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG}" -> classOf[ByteArraySerializer],
