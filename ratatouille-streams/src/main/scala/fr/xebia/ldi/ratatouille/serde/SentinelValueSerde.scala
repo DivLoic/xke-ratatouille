@@ -27,7 +27,7 @@ object SentinelValueSerde {
 
       Try(super.deserialize(topic, data)) match {
         case Success(value) => value
-        case Failure(err) if err.getMessage.endsWith("AET") => throw err
+        case Failure(err) if err.getMessage.contains("TimeZone") => throw err
         case Failure(_) => FoodOrderError
       }
   }

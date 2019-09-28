@@ -87,12 +87,11 @@ object Demo extends App with DemoImplicits {
 
   logger debug topology.describe().toString
 
-  streams.cleanUp()
-
-  streams.start()
-
   sys.ShutdownHookThread {
-    logger error "The app just entered the shutdown hook, now closing kafka streams"
-    streams.close()
+      logger error "☠️  ☠️  closing the streaming app ☠️  ☠️"
+      streams.close()
   }
+
+  streams.cleanUp()
+  streams.start()
 }

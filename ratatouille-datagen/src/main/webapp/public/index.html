@@ -110,7 +110,7 @@
                 <th style="height: 60px"></th>
             </tr>
             </tbody>
-            <thead class="connectors">
+            <!--<thead class="connectors">
             <tr>
                 <th scope="row">&nbsp;&nbsp;&nbsp;🔗&nbsp;&nbsp;&nbsp;</th>
                 <th scope="col">Connector</th>
@@ -132,7 +132,7 @@
                     </ul>
                 </td>
             </tr>
-            </tbody>
+            </tbody>-->
         </table>
     </div>
 </main>
@@ -155,12 +155,22 @@
     var CONNECTOR = {
         name: "exercise-drink-sink",
         config: {
-            'connector.class': "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
-            'tasks.max': "1",
-            'topics': "dlq-food-order",
-            'key.ignore': true,
-            'connection.url': "http://elasticsearch:9200",
-            'type.name': "kafka-connect"
+            "topics": "dlq-food-order",
+            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+            "tasks.max": "1",
+            "key.ignore": true,
+            "schema.ignore": true,
+            "type.name": "kafka-connect",
+            "key.converter.schemas.enable": false,
+            "value.converter.schemas.enable": false,
+            "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+            "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+            "connection.url": "http://elasticsearch:9200",
+            // Following config won't work
+            // See: https://issues.apache.org/jira/browse/KAFKA-7472
+            "transforms": "HoistField",
+            "transforms.HoistField.field": "line",
+            "transforms.HoistField.type": "org.apache.kafka.connect.transforms.HoistField$Value"
         }
     };
 

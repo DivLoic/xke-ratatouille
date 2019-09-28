@@ -23,7 +23,6 @@ services:
     ports:
     - 29092:29092
     - 9092:9092
-    #- 9094:9094
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -39,17 +38,6 @@ services:
       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-#      KAFKA_JMX_OPTS: >
-#        -Djava.rmi.server.hostname=kafka
-#        -Dcom.sun.management.jmxremote.rmi.port=9093
-#        -Dcom.sun.management.jmxremote=true
-#        -Dcom.sun.management.jmxremote.ssl=false
-#        -Dcom.sun.management.jmxremote.authenticate=false
-#        -javaagent:/var/lib/share/java/prometheus.jar=9094:/etc/kafka/kafka-jmx.yml
-#      JMX_PORT: 9093
-#    volumes:
-#    - ./docker/volumes/config/kafka-jmx.yml/:/etc/kafka/kafka-jmx.yml
-#    - ./docker/volumes/jmx_prometheus_javaagent-0.3.1.jar/:/var/lib/share/java/prometheus.jar
     networks:
     - ratatouille
 
@@ -70,20 +58,6 @@ services:
       SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
     networks:
     - ratatouille
-
-#  landoop-schema-registry-ui:
-#    image: landoop/schema-registry-ui:latest
-#    depends_on:
-#    - schema-registry
-#    ports:
-#    - "8888:8000"
-#    hostname: schema-registry-ui
-#    container_name: schema-registry-ui
-#    environment:
-#      SCHEMAREGISTRY_URL: 'http://schema-registry:8081'
-#      PROXY: "true"
-#    networks:
-#    - ratatouille
 
   kafka-connect:
     image: ratatouille/cp-kafka-connect:5.3.0
@@ -129,33 +103,6 @@ services:
     networks:
     - ratatouille
 
-#  prometheus:
-#    image: prom/prometheus:v2.8.1
-#    hostname: prometheus
-#    container_name: prometheus
-#    ports:
-#    - "9090:9090"
-#    command: --config.file=/etc/prometheus/prometheus.yml
-#    volumes:
-#    - ./docker/volumes/config/prometheus.yml:/etc/prometheus/prometheus.yml
-#    networks:
-#    - ratatouille
-#
-#  grafana:
-#    image: grafana/grafana:6.1.3
-#    hostname: grafana
-#    container_name: grafana
-#    ports:
-#    - "3000:3000"
-#    volumes:
-#    # - ./docker/volumes/data/graphana/:/var/lib/grafana
-#    - ./docker/volumes/config/dashboards/:/etc/grafana/dashboards/
-#    - ./docker/volumes/config/provisioning/:/etc/grafana/provisioning/
-#    depends_on:
-#    - prometheus
-#    networks:
-#    - ratatouille
-
   control-center:
     image: confluentinc/cp-enterprise-control-center:5.3.0
     hostname: control-center
@@ -200,34 +147,6 @@ services:
     networks:
     - ratatouille
 
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-#    hostname: elasticsearch
-#    container_name: elasticsearch
-#    ports:
-#      - 9200:9200
-#    environment:
-#      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms128m -Xmx128m"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    networks:
-#      - ratatouille
-#
-#  kibana:
-#    image: docker.elastic.co/kibana/kibana:6.6.1
-#    hostname: kibana
-#    container_name: kibana
-#    ports:
-#      - "5601:5601"
-#    environment:
-#      SERVER_NAME: kibana
-#      ELASTICSEARCH_HOSTS: elasticsearch:9200
-#    networks:
-#      - ratatouille
 
 networks:
   ratatouille:

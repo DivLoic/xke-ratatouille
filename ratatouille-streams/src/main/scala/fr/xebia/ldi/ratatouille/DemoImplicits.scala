@@ -1,5 +1,6 @@
 package fr.xebia.ldi.ratatouille
 
+import java.nio.charset.StandardCharsets.UTF_8
 import java.util.Properties
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
@@ -36,5 +37,6 @@ trait DemoImplicits {
 
   implicit class ByteArrayOps(array: Array[Byte]) {
     def toHex: String = BitVector(array).toHex
+    def toHexStr: Array[Byte] = array.flatMap(BitVector(_).toHex.getBytes(UTF_8))
   }
 }

@@ -40,23 +40,23 @@ object Lunch {
   }
 
   val menu: Vector[Lunch] = Vector(
-    Lunch("Pâté en croûte de canard et foie gras", 10, Starter),
-    Lunch("Carpaccio de boeuf fumé - sauce ravigote", 10, Starter),
-    Lunch("Poireaux crayons - aile de raie - vinaigrette à la truffe", 10, Starter),
-    Lunch("Raviolis de canard - bouillon pot-au-feu. (+2€)", 10, Starter),
-    Lunch("Crème de pois cassés - petits croûtons - chorizo", 10, Starter),
+    Lunch("Ratatouille", 10, Starter),
+    Lunch("Potato Salardaise", 10, Starter),
+    Lunch("Cornet Of Fries & Aioli", 10, Starter),
+    Lunch("Oyster Mushrooms & Garlic", 10, Starter),
+    Lunch("Potato Salardaise with butter Lettuce", 10, Starter),
 
-    Lunch("Filet de maigre - épinard au beurre - émulsion de crustacés", 19, MainDish),
-    Lunch("Brandade de haddock au chou vert", 19, MainDish),
-    Lunch("Travers de cochon braisé - lentilles", 19, MainDish),
-    Lunch("Araignée de cochon à la plancha - panais - chou braisé", 19, MainDish),
-    Lunch("Bavette de veau au saté - pommes grenailles - choux de Bruxelles (+4€)", 19, MainDish),
+    Lunch("Chopped raw steak with french fries", 19, MainDish),
+    Lunch("Confit of mulard duck leg with french green lentils", 19, MainDish),
+    Lunch("Pan roasted pork chop, parsnips puree", 19, MainDish),
+    Lunch("Confit tombo tuna, assorted vegetables, butter lettuce", 19, MainDish), // Salade Nicoise
+    Lunch("Pan roasted hanger steak - brussels sprouts (+4€)", 19, MainDish), // Bavette
 
-    Lunch("Fromage: Comté 2016", 9, Dessert),
-    Lunch("Oeuf à la neige et pralines roses", 9, Dessert),
-    Lunch("Baba au rhum ambré - crème légère au miel d'acacia", 9, Dessert),
-    Lunch("Crumble - ganache chocolat noir", 9, Dessert),
-    Lunch("Riz au lait à la vanille - caramel au beurre salé", 9, Dessert)
+    Lunch("Cheese: Comté 2016", 9, Dessert),
+    Lunch("Fresh seasonal fruit tart", 9, Dessert),
+    Lunch("Baba au rhum", 9, Dessert),
+    Lunch("Financier: honey yogurt & berry couli", 9, Dessert),
+    Lunch("Hazelnut ice cream, warm chocolate sauce", 9, Dessert)
   )
 
   final class LunchError(line: String) extends

@@ -54,7 +54,7 @@ private[common] object Buggy {
     .flatMap { cmd =>
       cmd.value.moment.region match {
         case zone if zone.toString equals ZoneId.of("Australia/Sydney").getId =>
-          Attempt.failure(Err(s"moment/zone: Unknown discriminator: AET"))
+          Attempt.failure(Err(s"missing evidence of Discriminator[Localized[_ <: TimeZone]]"))
         case _ => Attempt.successful(cmd)
       }
     }

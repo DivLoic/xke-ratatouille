@@ -50,11 +50,19 @@ class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHand
       new RecordHeader("drink-detail", record.value.slice(5, 9).toHex.getBytes(UTF_8)),
     ) toIterable
 
-    val producerRecord = new ProducerRecord(topic, null, record.timestamp, record.key, record.value, headers.asJava)
+    val producerRecord: ProducerRecord[Array[Byte], Array[Byte]] = new ProducerRecord(
+      topic,
+      null,
+      record.timestamp,
+      record.key,
+      record.value /*presentation only*/ .toHexStr,
+      headers.asJava
+    )
 
     producer.send(
       producerRecord,
-      (_: RecordMetadata, exception: Exception) => Option(exception).foreach(logger.warn("[DLQ] - ", _))
+      (_: RecordMetadata, exception: Exception) =>
+        Option(exception).foreach(logger.warn("[Dead Letter Queue] - ", _))
     )
 
     DeserializationHandlerResponse.CONTINUE
