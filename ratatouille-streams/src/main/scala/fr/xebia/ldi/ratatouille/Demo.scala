@@ -27,4 +27,48 @@ import scala.collection.JavaConverters._
   */
 object Demo extends App with DemoImplicits {
 
+  val logger = LoggerFactory.getLogger(getClass)
+
+  val config = Map(
+    StreamsConfig.BOOTSTRAP_SERVERS_CONFIG -> "localhost:9092",
+    StreamsConfig.APPLICATION_ID_CONFIG -> "kafka-summit-2019"
+  ) ++ monitoringConfigs
+
+  val avroSerde: GenericAvroSerde = new GenericAvroSerde()
+  avroSerde.configure(Map(SCHEMA_REGISTRY_URL_CONFIG -> "http://localhost:8081").asJava, false)
+  val consumed: Consumed[Bytes, FoodOrder] = Consumed.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde)
+  val produced: Produced[Bytes, GenericRecord] = Produced.`with`(Serdes.Bytes, avroSerde)
+
+  val builder = new StreamsBuilder()
+
+  val Array(breakfasts, other) = builder
+
+    .stream[Bytes, FoodOrder]("input-food-order")(consumed)
+
+    .branch(
+      (_, value) => value.isInstanceOf[Breakfast],
+      (_, _) => false
+    )
+
+  val _ = {
+    breakfasts  print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🥐Label`)
+    //lunches     //print   Printed.toSysOut[Bytes, FoodOrder]    //.withLabel(`🍕Label`)
+    //drinks      //print   Printed.toSysOut[Bytes, FoodOrder]    //.withLabel(`🍺Label`)
+    //dinners     //print   Printed.toSysOut[Bytes, FoodOrder]    //.withLabel(`🍝Label`)
+  }
+
+  breakfasts /* processing */ .mapValues(_.toAvro).to("decoded-breakfast")(produced)
+
+  val topology: Topology = builder.build()
+  val streams: KafkaStreams = new KafkaStreams(builder.build(), config)
+  logger debug topology.describe().toString
+
+  sys.ShutdownHookThread {
+      logger error "☠️☠️ closing the streaming app ☠️☠️"
+      streams.close()
+  }
+
+  streams.cleanUp()
+  streams.start()
+
 }

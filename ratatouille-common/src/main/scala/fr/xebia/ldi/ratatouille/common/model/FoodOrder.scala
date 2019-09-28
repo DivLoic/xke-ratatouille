@@ -35,7 +35,7 @@ object FoodOrder {
     .typecase(DinnerType, Codec[Dinner])
 
   private[common] lazy val buggyFoodCodec = scodec.codecs.discriminated[FoodOrder].by(Codec[FoodType])
-    .typecase(BreakfastType, Codec[Breakfast](/** -> */Buggy.breakfastEvidence /** <- delete this to fix the codec */))
+    .typecase(BreakfastType, Codec[Breakfast])
     .typecase(LunchType, Codec[Lunch](/** -> */Buggy.lunchEvidence /** <- delete this to fix the codec */))
     .typecase(DrinkType, Codec[Drink](/** -> */Buggy.drinkEvidence /** <- delete this to fix the codec */))
     .typecase(DinnerType, Codec[Dinner](/** -> */Buggy.dinnerEvidence /** <- delete this to fix the codec */))
