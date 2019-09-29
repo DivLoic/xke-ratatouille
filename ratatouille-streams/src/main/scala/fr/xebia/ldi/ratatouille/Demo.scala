@@ -41,26 +41,32 @@ object Demo extends App with DemoImplicits {
 
   val builder = new StreamsBuilder()
 
-  val Array(breakfasts, lunches, other) = builder
+  val Array(breakfasts, lunches, drinks, errors, other) = builder
 
     .stream[Bytes, FoodOrder]("input-food-order")(consumed)
 
     .branch(
       (_, value) => value.isInstanceOf[Breakfast],
       (_, value) => value.isInstanceOf[Lunch],
+      (_, value) => value.isInstanceOf[Drink],
+      (_, value) => value equals FoodOrderError,
       (_, _) => false
     )
 
   val _ = {
     breakfasts  print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🥐Label`)
     lunches     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍕Label`)
-    //drinks      //print   Printed.toSysOut[Bytes, FoodOrder]    //.withLabel(`🍺Label`)
+    drinks      print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍺Label`)
     //dinners     //print   Printed.toSysOut[Bytes, FoodOrder]    //.withLabel(`🍝Label`)
   }
 
   breakfasts /* processing */ .mapValues(_.toAvro).to("decoded-breakfast")(produced)
 
   lunches /* processing */ .mapValues(_.toAvro).to("decoded-lunch")(produced)
+
+  drinks /* processing */ .mapValues(_.toAvro).to("decoded-drink")(produced)
+
+  errors.transformValues(() => new FoodOrderSentinelValueProcessor())
 
   val topology: Topology = builder.build()
   val streams: KafkaStreams = new KafkaStreams(builder.build(), config)

@@ -37,7 +37,7 @@ object FoodOrder {
   private[common] lazy val buggyFoodCodec = scodec.codecs.discriminated[FoodOrder].by(Codec[FoodType])
     .typecase(BreakfastType, Codec[Breakfast])
     .typecase(LunchType, Codec[Lunch])
-    .typecase(DrinkType, Codec[Drink](/** -> */Buggy.drinkEvidence /** <- delete this to fix the codec */))
+    .typecase(DrinkType, Codec[Drink])
     .typecase(DinnerType, Codec[Dinner](/** -> */Buggy.dinnerEvidence /** <- delete this to fix the codec */))
 
   implicit lazy val BreakfastFormat: RecordFormat[Breakfast] = RecordFormat[Breakfast]
