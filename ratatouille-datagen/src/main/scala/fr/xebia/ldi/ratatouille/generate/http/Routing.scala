@@ -21,4 +21,12 @@ trait Routing extends CorsSupport
       }
     }
 
+  val staticContent: Route =
+    pathPrefix("app") {
+      corsHandler {
+        get {
+          getFromResourceDirectory("public/")
+        }
+      }
+  }
 }

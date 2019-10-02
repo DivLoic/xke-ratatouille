@@ -1,6 +1,9 @@
 plugins { }
 
-dependencies {
+apply plugin: 'application'
 
+mainClassName = 'fr.xebia.ldi.ratatouille.Demo'
+
+dependencies {
     compile project(':ratatouille-common')
 }

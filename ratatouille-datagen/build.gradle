@@ -1,5 +1,6 @@
 plugins { id 'com.palantir.docker' version '0.21.0' }
 
+apply plugin: 'application'
 apply plugin: 'com.palantir.docker'
 
 mainClassName = 'fr.xebia.ldi.ratatouille.generate.GeneratorServer'
@@ -13,4 +14,12 @@ docker {
 
 dependencies {
     compile project(':ratatouille-common')
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "src/main/resources", "src/main/webapp"
+        }
+    }
 }

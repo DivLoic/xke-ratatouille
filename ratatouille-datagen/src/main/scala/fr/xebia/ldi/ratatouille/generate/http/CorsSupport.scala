@@ -9,9 +9,9 @@ import akka.http.scaladsl.server.{Directive0, Route}
 /**
   * Created by loicmdivad.
   */
-trait CorsSupport extends Conf {
+trait CorsSupport {
   lazy val allowedOriginHeader: `Access-Control-Allow-Origin` = {
-    val sAllowedOrigin = "*" //TODO turn to variable with config (cors.getString("allowed-origin"))
+    val sAllowedOrigin = "*"
     if (sAllowedOrigin == "*")
       `Access-Control-Allow-Origin`.*
     else

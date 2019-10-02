@@ -1,63 +1,70 @@
 package fr.xebia.ldi.ratatouille.handler
 
+import java.nio.charset.StandardCharsets.UTF_8
+import java.time.ZonedDateTime
 import java.util
 
-import com.sksamuel.avro4s.RecordFormat
-import fr.xebia.ldi.ratatouille.handler.DeadLetterQueueFoodExceptionHandler.{DLQMessage, dqlFormat, recordToAvro}
-import org.apache.avro.generic.GenericRecord
+import fr.xebia.ldi.ratatouille.DemoImplicits
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord, RecordMetadata}
+import org.apache.kafka.common.header.Header
+import org.apache.kafka.common.header.internals.RecordHeader
 import org.apache.kafka.streams.errors.DeserializationExceptionHandler
 import org.apache.kafka.streams.errors.DeserializationExceptionHandler.DeserializationHandlerResponse
 import org.apache.kafka.streams.processor.ProcessorContext
-import scodec.bits.BitVector
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
 
 /**
-  * Created by loicmdivad.
-  */
-class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHandler {
+ * Created by loicmdivad.
+ */
+class DeadLetterQueueFoodExceptionHandler() extends DeserializationExceptionHandler with DemoImplicits {
 
   var topic: String = _
-  var producer: KafkaProducer[Array[Byte], GenericRecord] = _
+  var producer: KafkaProducer[Array[Byte], Array[Byte]] = _
+
+  val logger: Logger = LoggerFactory.getLogger(getClass)
+
+  override def configure(configs: util.Map[String, _]): Unit = {
+
+    topic = configs.asScala.get("dlq.topic.name").map(_.toString).orNull
+
+    val properties = (configs.asScala.toMap - "dlq.topic.name")
+
+      .filterKeys(_.startsWith("dlq."))
+
+      .map { case (k: String, v) => (k.substring(4), v) }
+
+    producer = new KafkaProducer[Array[Byte], Array[Byte]](properties)
+  }
 
   override def handle(context: ProcessorContext,
                       record: ConsumerRecord[Array[Byte], Array[Byte]],
                       exception: Exception): DeserializationHandlerResponse = {
 
-    val valueMessage: GenericRecord = recordToAvro(record, exception)
+    val headers = record.headers().toArray ++ Array[Header](
+      new RecordHeader("processing-time", ZonedDateTime.now().toString.getBytes(UTF_8)),
+      new RecordHeader("error-message", exception.getMessage.getBytes(UTF_8)),
+      new RecordHeader("drink-datetime", record.value.takeRight(10).toHex.getBytes(UTF_8)),
+      new RecordHeader("drink-detail", record.value.slice(5, 9).toHex.getBytes(UTF_8)),
+    ) toIterable
 
-    producer.send(new ProducerRecord(topic, null, record.timestamp, record.key, valueMessage))
+    val producerRecord: ProducerRecord[Array[Byte], Array[Byte]] = new ProducerRecord(
+      topic,
+      null,
+      record.timestamp,
+      record.key,
+      record.value /*presentation only*/ .toHexStr,
+      headers.asJava
+    )
+
+    producer.send(
+      producerRecord,
+      (_: RecordMetadata, exception: Exception) =>
+        Option(exception).foreach(logger.warn("[Dead Letter Queue] - ", _))
+    )
 
     DeserializationHandlerResponse.CONTINUE
   }
-
-  override def configure(configs: util.Map[String, _]): Unit = {
-    topic = configs.asScala.get("dlq.topic.name").map(_.toString).orNull
-
-    producer = new KafkaProducer[Array[Byte], GenericRecord]((configs.asScala - "dlq.topic.name")
-
-      .filter { case (key, _) => key.startsWith("dlq.") }
-
-      .map { case (key, value) => key.toLowerCase.substring(4) -> value.asInstanceOf[AnyRef] }.asJava)
-
-  }
-}
-
-object DeadLetterQueueFoodExceptionHandler {
-
-  implicit val dqlFormat: RecordFormat[DLQMessage] = RecordFormat[DLQMessage]
-
-  def recordToAvro(record: ConsumerRecord[Array[Byte], Array[Byte]], exception: Exception): GenericRecord = dqlFormat
-    .to(
-      DLQMessage(
-      record.value,
-      BitVector(record.value).toHex,
-      exception.getMessage,
-      exception.getStackTrace.toVector.map(_.toString)
-      )
-    )
-
-  case class DLQMessage(origin: Array[Byte], hexa: String, message: String, traces: Vector[String])
 }

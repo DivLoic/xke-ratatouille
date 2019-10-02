@@ -16,6 +16,7 @@ import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.common.utils.Bytes
 import org.slf4j.LoggerFactory
 import pureconfig.loadConfig
+import pureconfig.generic.auto._
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -64,18 +65,18 @@ object GeneratorServer extends App with ConfigurableApp with Routing {
 
     topicsCreation(kafkaClientConfig, appConfig)
 
-    logger info s"Binding Generator server to: ${appConfig.httpServer.host}:${appConfig.httpServer.port}"
+    logger info s"Binding the static webapp to: ${appConfig.webApp.host}:${appConfig.webApp.port}"
 
-    Http().bindAndHandle(
-      routes,
-      appConfig.httpServer.host,
-      appConfig.httpServer.port
-    )
+    Http().bindAndHandle(staticContent, appConfig.webApp.host, appConfig.webApp.port)
+
+    logger info s"Binding the generator server to: ${appConfig.httpServer.host}:${appConfig.httpServer.port}"
+
+    Http().bindAndHandle(routes, appConfig.httpServer.host, appConfig.httpServer.port)
 
   }).left.map { failures =>
       failures.toList.foreach { failure =>
         logger error failure.description
       }
-      sys.exit()
+      sys.exit(1)
   }
 }

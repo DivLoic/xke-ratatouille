@@ -70,7 +70,7 @@ In a new terminal, run the consumer script.
 $ ./consume-input.sh
 ```
 
-Open a web browser at the address: [http://localhost:8080](http://localhost:8080).   
+Open a web browser at the address: [http://localhost:8080](http://localhost:8080/app/index.html).   
 An interface with four toggles lets you generate records. Among theses records some are corrupted,
 that's the *poison pills 💊* specially introduced by the generator.  
 

@@ -18,14 +18,14 @@ object FoodOrderDraft extends App {
 
   // Breakfast__________________________________________________________________________________________________________
   println("Breakfast")
-  println(Codec.encode[FoodOrder](Breakfast(EN(), Beer(), Pineapple(), Left(Meat(2, 3, 1)))).require)
+  println(Codec.encode[FoodOrder](Breakfast(EN, Beer, Pineapple, Left(Meat(2, 3, 1)))).require)
   printf(Codec.decode[FoodOrder](hex"0044d1fe10020301".bits).require.toString)
 
   (0 until 3) foreach (_ => println())
 
   // Lunch______________________________________________________________________________________________________________
   println("Lunch")
-  println(Codec.encode[FoodOrder](Lunch("Some awesome food name", 2.0, Lunch.MainDish())).require)
+  println(Codec.encode[FoodOrder](Lunch("Some awesome food name", 2.0, Lunch.MainDish)).require)
   println(Codec.decode[FoodOrder](hex"0100000016536f6d6520617765736f6d6520666f6f64206e616d6540000000000000006d61696e00".bits).require)
 
   (0 until 3) foreach (_ => println())

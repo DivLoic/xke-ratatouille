@@ -12,8 +12,7 @@ import scodec.codecs.implicits._
   */
 trait FoodOrder {
 
-  def toAvro[T <: FoodOrder : RecordFormat]: GenericRecord =
-    implicitly[RecordFormat[T]].to(this.asInstanceOf[T])
+  def toAvro: GenericRecord
 }
 
 object FoodOrder {
