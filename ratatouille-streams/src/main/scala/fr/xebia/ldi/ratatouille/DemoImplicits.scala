@@ -21,6 +21,11 @@ trait DemoImplicits {
   val `🍺Label` = "\uD83C\uDF7Adrink"
   val `🍝Label` = "\uD83C\uDF5Ddinner"
 
+  val BreakfastTopic = "decoded-breakfast"
+  val LunchTopic = "decoded-lunch"
+  val DrinkTopic = "decoded-drink"
+  val DinnerTopic = "decoded-dinner"
+
   val monitoringConfigs: Map[String, String] = Map(
     StreamsConfig.PRODUCER_PREFIX + ProducerConfig.INTERCEPTOR_CLASSES_CONFIG ->
       "io.confluent.monitoring.clients.interceptor.MonitoringProducerInterceptor",

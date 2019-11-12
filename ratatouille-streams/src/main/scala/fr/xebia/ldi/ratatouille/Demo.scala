@@ -70,15 +70,15 @@ object Demo extends App with DemoImplicits {
     dinners     print   Printed.toSysOut[Bytes, FoodOrder]    .withLabel(`🍝Label`)
   }
 
-  breakfasts. /* processing */ mapValues(_.toAvro).to("decoded-breakfast")
+  breakfasts. /* processing */ mapValues(_.toAvro).to(BreakfastTopic)
 
-  lunches. /* processing */ mapValues(_.toAvro).to("decoded-lunch")
+  lunches. /* processing */ mapValues(_.toAvro).to(LunchTopic)
 
-  drinks. /* processing */ mapValues(_.toAvro).to("decoded-drink")
+  drinks. /* processing */ mapValues(_.toAvro).to(DrinkTopic)
 
   errors.transformValues(() => new FoodOrderSentinelValueProcessor())
 
-  dinners. /* processing */ mapValues(_.toAvro).to("decoded-dinner")
+  dinners. /* processing */ mapValues(_.toAvro).to(DinnerTopic)
 
   others.to("decoded-other")(Produced.`with`(Serdes.Bytes, FoodOrderSerde.foodSerde))
 
