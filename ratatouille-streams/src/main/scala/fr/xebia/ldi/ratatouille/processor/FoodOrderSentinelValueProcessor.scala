@@ -3,10 +3,9 @@ package fr.xebia.ldi.ratatouille.processor
 import java.util.concurrent.TimeUnit
 
 import fr.xebia.ldi.ratatouille.common.model.FoodOrder
-import fr.xebia.ldi.ratatouille.serde.SentinelValueSerde.FoodOrderError
 import org.apache.kafka.common.MetricName
 import org.apache.kafka.common.metrics.Sensor
-import org.apache.kafka.common.metrics.stats.{Count, Rate, Sum, Total}
+import org.apache.kafka.common.metrics.stats.{Count, Rate, Total}
 import org.apache.kafka.streams.kstream.ValueTransformer
 import org.apache.kafka.streams.processor.ProcessorContext
 
@@ -34,7 +33,10 @@ class FoodOrderSentinelValueProcessor extends ValueTransformer[FoodOrder, Unit] 
   override def init(context: ProcessorContext): Unit = {
     this.context = context
 
-    sensor = this.context.metrics.addSensor("sentinel-value", Sensor.RecordingLevel.INFO)
+    sensor = this.context.metrics.addSensor(
+      s"sentinel-value-${context.taskId().toString}",
+      Sensor.RecordingLevel.INFO
+    )
 
     sensor.add(metricName("total"), new Total)
     sensor.add(metricName("rate"), new Rate(TimeUnit.SECONDS, new Count()))
