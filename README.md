@@ -1,6 +1,6 @@
-# XKE RATATOUILLE
+# XKE Ratatouille: Streaming App and Poison Pills 
 
-This module illustrate the concept of *poison pill 💊* for streaming application and shows how to face this issue with 
+This module illustrates the concept of *poison pill 💊* for streaming applications and shows how to face this issue with 
 [Kafka Streams](https://kafka.apache.org/documentation/streams/), a client library for building continuous processing 
 applications with Apache Kafka.  
 
@@ -8,6 +8,14 @@ applications with Apache Kafka.
 or that the **serializer**/**deserializer** might be incorrect or buggy, or cannot handle all record types. 
 These types of records are referred to as “*poison pills*”.
 -- _[Confluent FAQ](https://docs.confluent.io/current/streams/faq.html#failure-and-exception-handling)_  
+
+## tl;dr
+
+The module is also the support for a few talks, here are the two major ones:
+- [Devoxx France 2019: Comment Kafka Streams compte faire passer la pillule_🇫🇷](https://blog.loicmdivad.com/talks/kafka-streams-poison-pills-devoxx-france19/)
+- [Kafka Summit San Francisco 2019: handle the unexpected with Kafka Streams](https://blog.loicmdivad.com/talks/kafka-streams-poison-pills-kafka-summit-sf19/)
+
+## Table of contents
 
 - [Storytelling](#Storytelling)
 - [Run the full demo](#Run-the-full-demo)
@@ -22,11 +30,6 @@ These types of records are referred to as “*poison pills*”.
 - [hexdump](http://man7.org/linux/man-pages/man1/hexdump.1.html) 
 - [Docker](https://www.docker.com/)
 - [jdk](https://openjdk.java.net/) >= 1.8
-
-## tl;dr
-This project is a demo from the talk: _Streaming App Poison Pills: handle the unexpected with Kafka Streams_
-([slides](https://speakerdeck.com/loicdivad/poison-pills-handle-the-unexpected-with-kafka-streams) / [video](https://www.youtube.com/watch?v=DTEext4DUN0)),
-first presented at _[DEVOXX France'2019](https://www.devoxx.fr/)_. 
 
 ## Storytelling
 
